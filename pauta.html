@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comitê de Pauta — Femba</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b1f33; --card:#102a45; --card2:#143454; --line:#1e4a73;
+    --gold:#3b9ae1; --gold-soft:#8fc7f0; --txt:#f0f6fc; --muted:#9fb8ce;
+    --ok:#4caf7d; --err:#e06c5c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-height:100vh;display:flex;justify-content:center;padding:24px 16px 48px}
+  .wrap{width:100%;max-width:560px}
+  .brand{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+  .brandlogo{height:64px;width:auto}
+  .brand small{display:block;color:var(--muted);font-size:12px}
+  .brand b{font-family:'Fraunces',serif;font-size:18px;letter-spacing:.5px}
+  h1{font-family:'Fraunces',serif;font-size:26px;line-height:1.2;margin:18px 0 6px}
+  .sub{color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:16px}
+  .deadline{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13px;margin-bottom:20px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 18px}
+  label{display:block;font-size:13px;font-weight:600;margin:16px 0 6px}
+  label:first-child{margin-top:0}
+  label .opt{color:var(--muted);font-weight:400}
+  input[type=text],input[type=url],textarea,select{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--txt);font-family:'Inter',sans-serif;font-size:15px;padding:12px 14px;outline:none;transition:border .15s}
+  input:focus,textarea:focus,select:focus{border-color:var(--gold)}
+  textarea{resize:vertical;min-height:84px}
+  select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23b3a58f' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+  .chip{border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;user-select:none;transition:all .15s}
+  .chip.on{background:var(--gold);border-color:var(--gold);color:#ffffff;font-weight:600}
+  .file{margin-top:2px}
+  .file input{display:none}
+  .file label2{display:block}
+  .filebtn{display:flex;align-items:center;gap:10px;width:100%;background:var(--card2);border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:14px;padding:14px;cursor:pointer;text-align:left}
+  .filebtn.has{border-style:solid;border-color:var(--ok);color:var(--ok)}
+  .btn{width:100%;background:var(--gold);color:#ffffff;border:none;border-radius:12px;font-size:16px;font-weight:700;font-family:'Inter',sans-serif;padding:15px;margin-top:24px;cursor:pointer;transition:filter .15s}
+  .btn:active{filter:brightness(.9)}
+  .btn[disabled]{opacity:.6;cursor:wait}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4}
+  .err{color:var(--err);font-size:13px;margin-top:10px;display:none}
+  .success{display:none;text-align:center;padding:36px 20px}
+  .success .big{font-size:52px;margin-bottom:12px}
+  .success h2{font-family:'Fraunces',serif;font-size:24px;margin-bottom:8px}
+  .success p{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:20px}
+  .again{background:none;border:1px solid var(--line);color:var(--gold-soft);border-radius:10px;padding:12px 20px;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif}
+  footer{margin-top:22px;text-align:center;color:var(--muted);font-size:12px;line-height:1.6}
+  .hp{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <img class="brandlogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALIAAACVCAMAAADL/VDUAAAARVBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////9SnXPCAAAAF3RSTlMAIEBggLDA0P8wEJDwcOCgUKbKxbHe1uCF3QwAAAxQSURBVHja7ZyLurOqroY5xBAB0X28/0vdRGpBQWltO+eea/3f84x2FCG8YAhgteIvllRS/COklAYY0FAUiL9BYySwoiupFIBD9LTTJP4aWcX1Az4BVLdDz6TE7yTX2h02q1cnHdrXt305debQrxzKDn1L4rtSlNVFlnRHJlYTKAqjZohalFL3veV1ZIy56Y4uCnqMchClosaE9F1kQzcEb7XVIKL8ErKPuZFuaOJa3pL6EjKPIqAbUn8fcnS1iW4onmZNbwleRMZLy7d6K+rW2XkducM83Yty5n3k+UXkYDvMcC/K4fvDFl/1ZdNhnu9FOfghcpv5o+5iTevk9566yJxl9F3m8L5TstQNf3oF+SXm9di74hhn6U3JPvL4ErO9FeXEjVKqj+xfYlY3+ovMHeSlh/wq81J4ZTBEDvYaEOtxhuKNSRNBqdH667lkI+0z53BlbGrryQZMO9wV6g9awytQt0W3aS30HWY2NCTDGbnNrbEs5Jo9igOAVvmSQWDfS+/DJa5+nZlRoULuBHx1Es3HqgSkqjXXcG25z1wi61eRXUZrIpv61KxVy8Cv18hvMHP+F5HnoozwB1rFCa4qs1aY8naQX2cWKcoFWJS8RM4DLohq8nMPr1HtdnaRrXmDedxXjzCNbatL4UyHYB7U5jbBnnoTjXeYQVQBtTWUvJMNmyF36WEmGWyudTg/O0rcYJ4Ea6BS0yFlMGtHjnXFT8EO2S/PSEVrrXvlDlnE28wIeRSfTgveCgmBu/JwikNxYspzhXLfLC+rkZVrepe5HhGsOft3tqsjoFe7WH9wf2hyYCP+zq8gq/maeTkGZnVETkjTLlhl5UFlDv4jfYUmc01XyFQxm+dprkY7J1TIqdTcdOXwdFBnm2G4cUr7yEfmgriKqfsE2LnW3ELGhMyeU2ugff/IoqmXyAdmacU5smWAEtmqVZaLO/XQXE4bUT6FtvYM7ZpnhzrIBXNttgrMOcot/Y0VrMj6qnKV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" alt="Femba">
+    <div><small>mais de 30 anos distribuindo em SP</small></div>
+  </div>
+
+  <div id="formView">
+    <h1>Comitê de pauta 📋</h1>
+    <p class="sub">Sugira um produto ou assunto para as postagens da semana. Leva <b>2 minutos</b> — e a sua sugestão pode virar post no Instagram, Facebook e LinkedIn.</p>
+    <div class="deadline"><span class="dot"></span><span><b>Pauta fecha quinta às 16h.</b> Depois disso, sua sugestão entra na rodada seguinte.</span></div>
+
+    <form class="card" id="f" name="pauta" novalidate>
+      <input type="hidden" name="form-name" value="pauta">
+      <label for="nome">Quem está sugerindo</label>
+      <select id="nome" required>
+        <option value="">Selecione…</option>
+        <option>Bruno</option><option>Wilson</option><option>Thiago P.</option>
+        <option>Franciele</option><option>Rainara</option><option>Leandro</option><option>George</option>
+        <option value="__outro">Outro</option>
+      </select>
+      <input type="text" id="nomeOutro" placeholder="Seu nome" style="display:none;margin-top:8px">
+
+      <label for="produto">Produto ou assunto <span style="color:var(--err)">*</span></label>
+      <input type="text" id="produto" placeholder="Ex.: Copo plástico 300ml c/ 100 un." required>
+
+      <label for="link">Link do produto no site <span class="opt">(opcional)</span></label>
+      <input type="url" id="link" placeholder="https://www.femba.com.br/…">
+      <p class="hint">Se colar o link, a foto e a descrição do produto são puxadas automaticamente.</p>
+
+      <label>Por que essa escolha? <span style="color:var(--err)">*</span></label>
+      <div class="chips" id="tags">
+        <span class="chip" data-t="Estoque parado">Estoque parado</span>
+        <span class="chip" data-t="Cliente pede muito">Cliente pede muito</span>
+        <span class="chip" data-t="Promoção do fornecedor">Promoção do fornecedor</span>
+        <span class="chip" data-t="Sazonal / data">Sazonal / data</span>
+        <span class="chip" data-t="Novidade">Novidade</span>
+        <span class="chip" data-t="Boa margem">Boa margem</span>
+      </div>
+      <label for="porque" style="margin-top:12px">Detalhe <span class="opt">(opcional, 1 frase basta)</span></label>
+      <textarea id="porque" placeholder="Ex.: fornecedor deu desconto até fim do mês; cliente de escola sempre pede nessa época…"></textarea>
+
+      <label>Foto do produto <span class="opt">(opcional)</span></label>
+      <div class="file">
+        <input type="file" id="foto" accept="image/*">
+        <label for="foto" class="filebtn" id="fotoBtn">📷 &nbsp;Tirar foto ou escolher da galeria</label>
+      </div>
+
+      <input type="text" class="hp" id="site" tabindex="-1" autocomplete="off">
+
+      <button class="btn" id="go" type="submit">Enviar sugestão</button>
+      <p class="err" id="err"></p>
+    </form>
+  </div>
+
+  <div class="success card" id="okView">
+    <div class="big">✅</div>
+    <h2>Recebido!</h2>
+    <p id="okMsg">Sua sugestão entrou na pauta desta semana.<br>Obrigado por alimentar o comitê — quem sugere, aparece no relatório de segunda. 🏆</p>
+    <button class="again" id="again">Enviar outra sugestão</button>
+  </div>
+
+  <p class="footer">Comitê de conteúdo Femba · operado pelo Maestro</p>
+</div>
+
+<script>
+const WEBHOOK="https://maestro.adapta.one/webhooks/generic/67cecbda4c5fd1a6fdc07b9b2348cc952f1614f762558ac9db763c889d95e324";
+const SECRET="7b6434674c05a6c89df91ec0734c9911a306acc54f513d12e288845869ed5857";
+const $=id=>document.getElementById(id);
+let tags=new Set(), fotoB64=null;
+
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+  const t=c.dataset.t;
+  if(tags.has(t)){tags.delete(t);c.classList.remove('on')}else{tags.add(t);c.classList.add('on')}
+}));
+$('nome').addEventListener('change',()=>{ $('nomeOutro').style.display = $('nome').value==='__outro' ? 'block':'none' });
+$('foto').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const img=new Image(), r=new FileReader();
+  r.onload=()=>{ img.onload=()=>{
+    const max=1200, sc=Math.min(1,max/Math.max(img.width,img.height));
+    const cv=document.createElement('canvas');
+    cv.width=img.width*sc; cv.height=img.height*sc;
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+    fotoB64=cv.toDataURL('image/jpeg',.72);
+    const kb=Math.round(fotoB64.length/1024);
+    $('fotoBtn').classList.add('has');
+    $('fotoBtn').textContent='✅ Foto anexada ('+kb+' KB) — toque para trocar';
+  }; img.src=r.result; };
+  r.readAsDataURL(f);
+});
+
+$('f').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const err=$('err'); err.style.display='none';
+  const nome=$('nome').value==='__outro'?$('nomeOutro').value.trim():$('nome').value;
+  const produto=$('produto').value.trim(), porque=$('porque').value.trim();
+  if(!nome||!produto||!porque){ err.textContent='Preencha: quem sugere, o produto e o porquê.'; err.style.display='block'; return }
+  if($('site').value){ showOk(); return } // honeypot
+  const btn=$('go'); btn.disabled=true; btn.textContent='Enviando…';
+  const payload={origem:'landing-pauta-femba', nome, produto, link:$('link').value.trim(), tags:[...tags], porque, foto:fotoB64, ts:new Date().toISOString()};
+  let sent=false;
+  try{
+    const r=await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json','X-Webhook-Secret':SECRET},body:JSON.stringify(payload)});
+    if(!r.ok) throw new Error('http '+r.status);
+    sent=true;
+    try{ await fetch('/', {method:'POST', body:new FormData(f)}) }catch(_n){} // cópia no Netlify Forms (best-effort)
+  }catch(_){
+    try{ await fetch(WEBHOOK+'?secret='+SECRET,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}); sent=true }catch(_2){}
+  }
+  if(sent){ showOk(nome) } else {
+    btn.disabled=false; btn.textContent='Enviar sugestão';
+    err.textContent='Sem conexão agora. Tente de novo em instantes.'; err.style.display='block';
+  }
+});
+function showOk(nome){ $('formView').style.display='none'; const v=$('okView'); v.style.display='block'; if(nome) $('okMsg').innerHTML='Valeu, <b>'+nome+'</b>! Sua sugestão entrou na pauta desta semana.<br>Quem sugere aparece no relatório de segunda. 🏆'; v.scrollIntoView({behavior:'smooth'}) }
+$('again').addEventListener('click',()=>{ $('f').reset(); tags.clear(); document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); fotoB64=null; $('fotoBtn').classList.remove('has'); $('fotoBtn').textContent='📷 &nbsp;Tirar foto ou escolher da galeria'; $('okView').style.display='none'; $('formView').style.display='block'; window.scrollTo({top:0,behavior:'smooth'}) });
+</script>
+</body>
+</html>

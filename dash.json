@@ -1,0 +1,131 @@
+{
+ "atualizado": "07/10/2026 12:13",
+ "kpis": {
+  "total_leads": 415,
+  "intocados": 339,
+  "whatsapp_enviados": 54,
+  "email_enviados": 20,
+  "email_invalidos": 0,
+  "respostas": 0,
+  "descadastros": 0,
+  "aberturas": 4,
+  "bounces": 5,
+  "quality_rating": "GREEN",
+  "tier": "TIER_2K",
+  "templates_aprovados": 10
+ },
+ "status_counts": {
+  "Novo": 328,
+  "WhatsApp_Enviado": 54,
+  "Email_Enviado": 20,
+  "Pendente": 11,
+  "Sem_Telefone": 1,
+  "Resgate_Pendente": 1
+ },
+ "ab_teste": {
+  "A": 10,
+  "B": 10,
+  "controle": 0,
+  "respostas_A": 0,
+  "respostas_B": 0
+ },
+ "aberturas_detalhe": [
+  {
+   "lead": "contato",
+   "email": "contato@uniepre.com.br",
+   "data": "2026-09-30 09:50"
+  },
+  {
+   "lead": "contato",
+   "email": "contato@aeb-brasil.org.br",
+   "data": "2026-10-02 08:28"
+  },
+  {
+   "lead": "contato",
+   "email": "contato@casatiamarly.org.br",
+   "data": "2026-10-02 09:10"
+  }
+ ],
+ "timeline": [
+  {
+   "data": "29/09",
+   "whatsapp": 0,
+   "email": 6
+  },
+  {
+   "data": "30/09",
+   "whatsapp": 3,
+   "email": 0
+  },
+  {
+   "data": "01/10",
+   "whatsapp": 10,
+   "email": 0
+  },
+  {
+   "data": "02/10",
+   "whatsapp": 0,
+   "email": 7
+  },
+  {
+   "data": "03/10",
+   "whatsapp": 0,
+   "email": 0
+  },
+  {
+   "data": "04/10",
+   "whatsapp": 0,
+   "email": 0
+  },
+  {
+   "data": "05/10",
+   "whatsapp": 20,
+   "email": 0
+  },
+  {
+   "data": "06/10",
+   "whatsapp": 0,
+   "email": 0
+  },
+  {
+   "data": "07/10",
+   "whatsapp": 20,
+   "email": 8
+  }
+ ],
+ "por_bairro": {
+  "Jaçanã": 30,
+  "Vila Sabrina": 30,
+  "Vila Santa Catarina": 27,
+  "Casa Verde": 26,
+  "Jardim Picerni": 25,
+  "Jardim Brasil": 22,
+  "Lauzane Paulista": 21,
+  "Carandiru": 20,
+  "Santana": 18,
+  "Mandaqui": 15
+ },
+ "canais": {
+  "moveis": 63,
+  "fixos": 247,
+  "sem_telefone": 29
+ },
+ "sdr": {
+  "v1": 83,
+  "v2": 82,
+  "v3": 82,
+  "respondidos": 0
+ },
+ "templates_aprovados_lista": [
+  "primeiro_contato_b",
+  "primeiro_contato_a",
+  "teste_bruno",
+  "primeiro_contato_v3",
+  "primeiro_contato_2",
+  "followup_cotacao",
+  "aviso_templates",
+  "teste_igor_02",
+  "teste_igor_01",
+  "hello_world"
+ ]
+}

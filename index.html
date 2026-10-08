@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FEMBA — Dashboard de Prospecção</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --bg:#0B1F33; --card:#102A45; --gold:#D4A017; --gold2:#F0C75E; --txt:#E8EEF5; --mut:#8FA3B8; --green:#3DBE7B; --red:#E05252; --blue:#4AA3E8; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--txt); font-family:'Inter',sans-serif; padding:24px; min-height:100vh; }
+.wrap { max-width:1200px; margin:0 auto; }
+.hdr { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:20px; }
+h1 { font-family:'Fraunces',serif; font-size:28px; color:var(--gold2); }
+.sub { color:var(--mut); font-size:13px; margin-top:4px; }
+.btn { background:var(--gold2); color:#08131F; border:none; border-radius:10px; padding:10px 18px; font-weight:700; font-size:13px; cursor:pointer; font-family:'Inter'; }
+.btn:hover { filter:brightness(1.1); } .btn:disabled { opacity:.5; cursor:wait; }
+.kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:20px; }
+.kpi { background:var(--card); border:1px solid #1C3A5C; border-radius:14px; padding:16px 18px; }
+.kpi .n { font-size:30px; font-weight:700; font-family:'Fraunces',serif; }
+.kpi .l { font-size:11px; color:var(--mut); margin-top:4px; text-transform:uppercase; letter-spacing:.5px; }
+.kpi.gold .n { color:var(--gold2); } .kpi.green .n { color:var(--green); } .kpi.blue .n { color:var(--blue); } .kpi.red .n { color:var(--red); }
+.grid { display:grid; grid-template-columns:1.3fr 1fr; gap:14px; margin-bottom:20px; }
+@media(max-width:900px){ .grid { grid-template-columns:1fr; } }
+.card { background:var(--card); border:1px solid #1C3A5C; border-radius:14px; padding:20px; }
+.card h3 { font-size:13px; color:var(--gold2); margin-bottom:14px; text-transform:uppercase; letter-spacing:.5px; }
+.bar { display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+.bar .lbl { width:160px; font-size:12px; color:var(--mut); }
+.bar .track { flex:1; background:#0A1C2E; border-radius:8px; height:22px; overflow:hidden; }
+.bar .fill { height:100%; border-radius:8px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:11px; font-weight:600; color:#08131F; }
+.b1 .fill { background:var(--gold2); } .b2 .fill { background:var(--blue); } .b3 .fill { background:var(--green); } .b4 .fill { background:#E08A3C; } .b5 .fill { background:#9B6BD4; } .b6 .fill { background:var(--red); }
+.badge { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:20px; background:rgba(61,190,123,.12); color:var(--green); font-size:12px; font-weight:600; margin-top:10px; }
+.dot { width:8px; height:8px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; color:var(--mut); font-size:11px; text-transform:uppercase; padding:6px 8px; border-bottom:1px solid #1C3A5C; }
+td { padding:7px 8px; border-bottom:1px solid #14293F; }
+.ab { display:flex; gap:12px; margin-top:8px; }
+.abcard { flex:1; background:var(--card2,#0E2438); border:1px solid #1C3A5C; border-radius:12px; padding:14px; text-align:center; }
+.abcard .v { font-size:26px; font-weight:700; font-family:'Fraunces',serif; color:var(--gold2); }
+.abcard .l { font-size:11px; color:var(--mut); margin-top:2px; }
+.winner { border-color:var(--green); }
+.winner::after { content:'🏆 líder'; display:block; font-size:10px; color:var(--green); margin-top:6px; }
+.tl { display:flex; gap:8px; align-items:flex-end; height:150px; padding-top:10px; }
+.tcol { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.tbars { display:flex; gap:3px; align-items:flex-end; height:110px; }
+.tb { width:16px; border-radius:4px 4px 0 0; }
+.tb.z { background:var(--gold2); } .tb.e { background:var(--blue); }
+.tl .d { font-size:11px; color:var(--mut); }
+.footer { color:var(--mut); font-size:11px; text-align:center; margin-top:20px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div>
+      <h1>FEMBA · Prospecção B2B</h1>
+      <div class="sub">Escolas e creches — Zona Norte SP · atualizado em <span id="ts">07/10/2026 12:13</span></div>
+    </div>
+    <button class="btn" onclick="atualizar()" id="btn">🔄 Atualizar dados</button>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi gold"><div class="n" id="k_total">415</div><div class="l">Leads na base</div></div>
+    <div class="kpi blue"><div class="n" id="k_intoc">339</div><div class="l">Intocados</div></div>
+    <div class="kpi green"><div class="n" id="k_zap">54</div><div class="l">WhatsApps enviados</div></div>
+    <div class="kpi blue"><div class="n" id="k_em">20</div><div class="l">E-mails enviados</div></div>
+    <div class="kpi gold"><div class="n" id="k_ab">4</div><div class="l">Aberturas</div></div>
+    <div class="kpi red"><div class="n" id="k_resp">0</div><div class="l">Respostas</div></div>
+    <div class="kpi green"><div class="n" id="k_desc">0</div><div class="l">Descadastros</div></div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <h3>Funil por status</h3>
+        <div id="funil"><div class="bar b1"><div class="lbl">WhatsApp Enviado</div><div class="track"><div class="fill" style="width:13%">54</div></div></div><div class="bar b2"><div class="lbl">Email Enviado</div><div class="track"><div class="fill" style="width:5%">20</div></div></div><div class="bar b3"><div class="lbl">Novo</div><div class="track"><div class="fill" style="width:79%">328</div></div></div><div class="bar b4"><div class="lbl">Pendente</div><div class="track"><div class="fill" style="width:4%">11</div></div></div><div class="bar b5"><div class="lbl">Email Nao Verificado</div><div class="track"><div class="fill" style="width:4%">0</div></div></div><div class="bar b6"><div class="lbl">Email Invalido</div><div class="track"><div class="fill" style="width:4%">0</div></div></div></div>
+        <div class="badge"><span class="dot"></span> Quality: <span id="k_quality">GREEN</span> · Limite <span id="k_tier">TIER_2K</span> · <span id="k_tpl">10</span> templates ativos</div>
+      </div>
+      <div class="card">
+        <h3>🧪 Teste A/B — gancho vencedor</h3>
+        <div class="sub" style="margin-bottom:6px">Variante A (dor) vs B (prova social) · 20 disparos de 05/10</div>
+        <div class="ab">
+          <div class="abcard" id="cardA"><div class="v">—</div><div class="l">Variante A · dor<br>10 disparos</div></div>
+          <div class="abcard" id="cardB"><div class="v">—</div><div class="l">Variante B · prova social<br>10 disparos</div></div>
+        </div>
+        <div class="sub" style="margin-top:10px">Primeira resposta de escola define o líder. Vigília automática registra.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <h3>Canais disponíveis (intocados)</h3>
+        <table>
+          <tr><th>Canal</th><th>Leads</th><th>Uso</th></tr>
+          <tr><td>📱 Celular/WhatsApp</td><td>63</td><td>Régua 9h</td></tr>
+          <tr><td>☎️ Fixo (SDR)</td><td>247</td><td>Aquecimento</td></tr>
+          <tr><td>❓ Sem telefone</td><td>29</td><td>Cross-check</td></tr>
+        </table>
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <h3>👁️ Aberturas (interesse real)</h3>
+        <table><tr><th>Lead</th><th>Quando</th></tr>4</table>
+      </div>
+      <div class="card">
+        <h3>📞 Progresso SDR Arthur</h3>
+        <table>
+          <tr><th>Etapa</th><th>Escolas</th><th>Status</th></tr>
+          <tr><td>v1</td><td>83</td><td>em campo</td></tr>
+          <tr><td>v2</td><td>82</td><td>aguardando</td></tr>
+          <tr><td>v3</td><td>82</td><td>aguardando</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>📈 Disparos por dia (🟡 WhatsApp · 🔵 E-mail)</h3>
+      <div class="tl"><div class="tcol"><div class="tbars">
+      <div class="tb z" style="height:3%" title="0 WhatsApps"></div>
+      <div class="tb e" style="height:30%" title="6 e-mails"></div>
+    </div><div class="d">29/09</div></div><div class="tcol"><div class="tbars">
+      <div class="tb z" style="height:15%" title="3 WhatsApps"></div>
+      <div class="tb e" style="height:3%" title="0 e-mails"></div>
+    </div><div class="d">30/09</div></div><div class="tcol"><div class="tbars">
+      <div class="tb z" style="height:50%" title="10 WhatsApps"></div>
+      <div class="tb e" style="height:3%" title="0 e-mails"></div>
+    </div><div class="d">01/10</div></div><div class="tcol"><div class="tbars">
+      <div class="tb z" style="height:3%" title="0 WhatsApps"></div>
+      <div class="tb e" style="height:35%" title="7 e-mails"></div>
+    </div><div class="d">02/10</div></div><div class="tcol"><div class="tbars">
+      <div class="tb z" style="height:3%" title="0 WhatsApps"></div>
+      <div class="tb e" style="height:3%" title="0 e-mails"></div>
+    </div><div class="d">03/10</div></div><div class="tcol"><div class="tbars">
+      <div class="tb z" style="height:3%" title="0 WhatsApps"></div>
+      <div class="tb e" style="height:3%" title="0 e-mails"></div>
+    </div><div class="d">04/10</div></div><div class="tcol"><div class="tbars">
+      <div class="tb z" style="height:100%" title="20 WhatsApps"></div>
+      <div class="tb e" style="height:3%" title="0 e-mails"></div>
+    </div><div class="d">05/10</div></div><div class="tcol"><div class="tbars">
+      <div class="tb z" style="height:3%" title="0 WhatsApps"></div>
+      <div class="tb e" style="height:3%" title="0 e-mails"></div>
+    </div><div class="d">06/10</div></div><div class="tcol"><div class="tbars">
+      <div class="tb z" style="height:100%" title="20 WhatsApps"></div>
+      <div class="tb e" style="height:40%" title="8 e-mails"></div>
+    </div><div class="d">07/10</div></div></div>
+    </div>
+    <div class="card">
+      <h3>🗺️ Leads por bairro (intocados)</h3>
+      <div id="bairros"><div class="bar b3"><div class="lbl" style="width:220px;font-size:11px">Jaçanã</div><div class="track"><div class="fill" style="width:100%">30</div></div></div><div class="bar b3"><div class="lbl" style="width:220px;font-size:11px">Vila Sabrina</div><div class="track"><div class="fill" style="width:100%">30</div></div></div><div class="bar b3"><div class="lbl" style="width:220px;font-size:11px">Vila Santa Catarina</div><div class="track"><div class="fill" style="width:90%">27</div></div></div><div class="bar b3"><div class="lbl" style="width:220px;font-size:11px">Casa Verde</div><div class="track"><div class="fill" style="width:87%">26</div></div></div><div class="bar b3"><div class="lbl" style="width:220px;font-size:11px">Jardim Picerni</div><div class="track"><div class="fill" style="width:83%">25</div></div></div><div class="bar b3"><div class="lbl" style="width:220px;font-size:11px">Jardim Brasil</div><div class="track"><div class="fill" style="width:73%">22</div></div></div><div class="bar b3"><div class="lbl" style="width:220px;font-size:11px">Lauzane Paulista</div><div class="track"><div class="fill" style="width:70%">21</div></div></div><div class="bar b3"><div class="lbl" style="width:220px;font-size:11px">Carandiru</div><div class="track"><div class="fill" style="width:67%">20</div></div></div><div class="bar b3"><div class="lbl" style="width:220px;font-size:11px">Santana</div><div class="track"><div class="fill" style="width:60%">18</div></div></div><div class="bar b3"><div class="lbl" style="width:220px;font-size:11px">Mandaqui</div><div class="track"><div class="fill" style="width:50%">15</div></div></div></div>
+    </div>
+  </div>
+
+  <div class="footer">FEMBA · Freguesia Comércio de Embalagens — mais de 30 anos · Jarvis/Maestro · dados ao vivo</div>
+</div>
+<script>
+let D = {"atualizado": "07/10/2026 12:13", "kpis": {"total_leads": 415, "intocados": 339, "whatsapp_enviados": 54, "email_enviados": 20, "email_invalidos": 0, "respostas": 0, "descadastros": 0, "aberturas": 4, "bounces": 5, "quality_rating": "GREEN", "tier": "TIER_2K", "templates_aprovados": 10}, "status_counts": {"Novo": 328, "WhatsApp_Enviado": 54, "Email_Enviado": 20, "Pendente": 11, "Sem_Telefone": 1, "Resgate_Pendente": 1}, "ab_teste": {"A": 10, "B": 10, "controle": 0, "respostas_A": 0, "respostas_B": 0}, "aberturas_detalhe": [{"lead": "contato", "email": "contato@uniepre.com.br", "data": "2026-09-30 09:50"}, {"lead": "contato", "email": "contato@aeb-brasil.org.br", "data": "2026-10-02 08:28"}, {"lead": "contato", "email": "contato@casatiamarly.org.br", "data": "2026-10-02 09:10"}], "timeline": [{"data": "29/09", "whatsapp": 0, "email": 6}, {"data": "30/09", "whatsapp": 3, "email": 0}, {"data": "01/10", "whatsapp": 10, "email": 0}, {"data": "02/10", "whatsapp": 0, "email": 7}, {"data": "03/10", "whatsapp": 0, "email": 0}, {"data": "04/10", "whatsapp": 0, "email": 0}, {"data": "05/10", "whatsapp": 20, "email": 0}, {"data": "06/10", "whatsapp": 0, "email": 0}, {"data": "07/10", "whatsapp": 20, "email": 8}], "por_bairro": {"Jaçanã": 30, "Vila Sabrina": 30, "Vila Santa Catarina": 27, "Casa Verde": 26, "Jardim Picerni": 25, "Jardim Brasil": 22, "Lauzane Paulista": 21, "Carandiru": 20, "Santana": 18, "Mandaqui": 15}, "canais": {"moveis": 63, "fixos": 247, "sem_telefone": 29}, "sdr": {"v1": 83, "v2": 82, "v3": 82, "respondidos": 0}, "templates_aprovados_lista": ["primeiro_contato_b", "primeiro_contato_a", "teste_bruno", "primeiro_contato_v3", "primeiro_contato_2", "followup_cotacao", "aviso_templates", "teste_igor_02", "teste_igor_01", "hello_world"]};
+let TS_ANTERIOR = D.atualizado;
+function render() {
+  TS_ANTERIOR = D.atualizado;
+  const k = D.kpis;
+  document.getElementById('ts').textContent = D.atualizado;
+  document.getElementById('k_total').textContent = k.total_leads;
+  document.getElementById('k_intoc').textContent = k.intocados;
+  document.getElementById('k_zap').textContent = k.whatsapp_enviados;
+  document.getElementById('k_em').textContent = k.email_enviados;
+  document.getElementById('k_ab').textContent = k.aberturas;
+  document.getElementById('k_resp').textContent = k.respostas;
+  document.getElementById('k_desc').textContent = k.descadastros;
+  document.getElementById('k_quality').textContent = k.quality_rating;
+  document.getElementById('k_tier').textContent = k.tier;
+  document.getElementById('k_tpl').textContent = k.templates_aprovados;
+  // funil
+  const ordem = [['WhatsApp_Enviado','b1'],['Email_Enviado','b2'],['Novo','b3'],['Pendente','b4'],['Email_Nao_Verificado','b5'],['Email_Invalido','b6']];
+  const total = k.total_leads;
+  document.getElementById('funil').innerHTML = ordem.map(([st, cls]) => {
+    const v = D.status_counts[st] || 0;
+    const pct = Math.max(v/total*100, 4);
+    return `<div class="bar ${cls}"><div class="lbl">${st.replace(/_/g,' ')}</div><div class="track"><div class="fill" style="width:${pct}%">${v}</div></div></div>`;
+  }).join('');
+  // A/B
+  const ab = D.ab_teste;
+  document.getElementById('cardA').querySelector('.v').textContent = ab.respostas_A;
+  document.getElementById('cardB').querySelector('.v').textContent = ab.respostas_B;
+  document.getElementById('cardA').querySelector('.l').innerHTML = 'Variante A · dor<br>' + ab.A + ' disparos';
+  document.getElementById('cardB').querySelector('.l').innerHTML = 'Variante B · prova social<br>' + ab.B + ' disparos';
+  document.getElementById('cardA').classList.toggle('winner', ab.respostas_A > ab.respostas_B && ab.respostas_A > 0);
+  document.getElementById('cardB').classList.toggle('winner', ab.respostas_B > ab.respostas_A && ab.respostas_B > 0);
+  document.getElementById('cardA').querySelector('.v').style.color = (ab.respostas_A === 0 && ab.respostas_B === 0) ? 'var(--mut)' : '';
+  document.getElementById('cardB').querySelector('.v').style.color = (ab.respostas_A === 0 && ab.respostas_B === 0) ? 'var(--mut)' : '';
+  document.getElementById('cardA').querySelector('.v').textContent = ab.respostas_A === 0 ? '—' : ab.respostas_A;
+  document.getElementById('cardB').querySelector('.v').textContent = ab.respostas_B === 0 ? '—' : ab.respostas_B;
+  // aberturas
+  document.getElementById('aberturas').closest('table').innerHTML =
+    '<tr><th>Lead</th><th>Quando</th></tr>' +
+    D.aberturas_detalhe.map(a => `<tr><td>${a.lead}</td><td>${a.data}</td></tr>`).join('');
+  // SDR
+  const s = D.sdr;
+  const st = (n, done) => done ? '✅ ' + done + ' confirmados' : (n === 0 ? '—' : 'aguardando');
+  document.getElementById('sdr1').textContent = s.v1;
+  document.getElementById('sdr2').textContent = s.v2;
+  document.getElementById('sdr3').textContent = s.v3;
+  document.getElementById('sdr1s').textContent = s.respondidos > s.v1 ? s.respondidos + ' confirmados' : 'em campo';
+  document.getElementById('sdr2s').textContent = 'aguardando';
+  document.getElementById('sdr3s').textContent = 'aguardando';
+  // timeline
+  const maxv = Math.max(...D.timeline.map(t => Math.max(t.whatsapp, t.email)), 1);
+  document.querySelector('.tl').innerHTML = D.timeline.map(t =>
+    `<div class="tcol"><div class="tbars">
+      <div class="tb z" style="height:${Math.max(t.whatsapp/maxv*100,3)}%" title="${t.whatsapp} WhatsApps"></div>
+      <div class="tb e" style="height:${Math.max(t.email/maxv*100,3)}%" title="${t.email} e-mails"></div>
+    </div><div class="d">${t.data}</div></div>`).join('');
+  // bairros
+  const bmax = Math.max(...Object.values(D.por_bairro), 1);
+  document.getElementById('bairros').innerHTML = Object.entries(D.por_bairro).map(([b, v]) =>
+    `<div class="bar b3"><div class="lbl" style="width:180px">${b}</div><div class="track"><div class="fill" style="width:${v/bmax*100}%">${v}</div></div></div>`).join('');
+}
+async function atualizar() {
+  const btn = document.getElementById('btn');
+  btn.disabled = true; btn.textContent = '⏳ Atualizando...';
+  try {
+    // fire-and-forget (CORS não permite ler resposta cross-origin)
+    fetch('https://maestro.adapta.one/webhooks/generic/9751b21efbc778e073867d634debc308af967b46cae939507e9063a0f24b77d8?secret=3f843867a101edb8e6cb62b5a20532798ff5b8d6fd754844fc117fd2e54095fc', { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' } });
+  } catch (e) { /* segue mesmo assim */ }
+  // aguarda o Jarvis regenerar + deploy, depois recarrega os dados
+  const tentar = async (n) => {
+    for (let i = 0; i < n; i++) {
+      await new Promise(r => setTimeout(r, 6000));
+      try {
+        const nd = await (await fetch('dash.json?nocache=' + Date.now())).json();
+        if (nd.atualizado !== TS_ANTERIOR) {
+          D = nd; render();
+          btn.textContent = '✅ Atualizado'; setTimeout(() => { btn.textContent = '🔄 Atualizar dados'; btn.disabled = false; }, 2500);
+          return;
+        }
+      } catch (e) {}
+    }
+    btn.textContent = '⏳ Ainda atualizando — recarregue em 1 min'; btn.disabled = false;
+  };
+  tentar(15);
+}
+render();
+setInterval(async () => { try { D = await (await fetch('dash.json?nocache=' + Date.now())).json(); render(); } catch(e){} }, 120000);
+</script>
+</body>
+</html>
