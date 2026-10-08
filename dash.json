@@ -1,5 +1,5 @@
 {
- "atualizado": "08/10/2026 10:03",
+ "atualizado": "08/10/2026 12:23",
  "kpis": {
   "total_leads": 415,
   "intocados": 294,
@@ -8,7 +8,7 @@
   "email_invalidos": 2,
   "respostas": 0,
   "descadastros": 0,
-  "aberturas": 7,
+  "aberturas": 8,
   "bounces": 6,
   "quality_rating": "GREEN",
   "tier": "TIER_2K",
@@ -61,6 +61,11 @@
    "lead": "contato",
    "email": "contato@raposavermelhaprime.com.br",
    "data": "2026-10-08 09:27"
+  },
+  {
+   "lead": "cei12deoutubro",
+   "email": "cei12deoutubro@gmail.com",
+   "data": "2026-10-08 10:14"
   }
  ],
  "timeline": [
