@@ -1,24 +1,26 @@
 {
- "atualizado": "07/10/2026 12:13",
+ "atualizado": "08/10/2026 09:58",
  "kpis": {
   "total_leads": 415,
-  "intocados": 339,
-  "whatsapp_enviados": 54,
-  "email_enviados": 20,
-  "email_invalidos": 0,
+  "intocados": 294,
+  "whatsapp_enviados": 76,
+  "email_enviados": 30,
+  "email_invalidos": 2,
   "respostas": 0,
   "descadastros": 0,
-  "aberturas": 4,
-  "bounces": 5,
+  "aberturas": 7,
+  "bounces": 6,
   "quality_rating": "GREEN",
   "tier": "TIER_2K",
   "templates_aprovados": 10
  },
  "status_counts": {
-  "Novo": 328,
-  "WhatsApp_Enviado": 54,
-  "Email_Enviado": 20,
-  "Pendente": 11,
+  "Novo": 287,
+  "WhatsApp_Enviado": 76,
+  "Email_Enviado": 30,
+  "Email_Confirmado_SDR": 11,
+  "Pendente": 7,
+  "Email_Invalido": 2,
   "Sem_Telefone": 1,
   "Resgate_Pendente": 1
  },
@@ -44,6 +46,21 @@
    "lead": "contato",
    "email": "contato@casatiamarly.org.br",
    "data": "2026-10-02 09:10"
+  },
+  {
+   "lead": "ceicverde",
+   "email": "ceicverde@sme.prefeitura.sp.gov.br",
+   "data": "2026-10-08 09:22"
+  },
+  {
+   "lead": "admiapi",
+   "email": "admiapi@colegioiapi.com.br",
+   "data": "2026-10-08 09:22"
+  },
+  {
+   "lead": "contato",
+   "email": "contato@raposavermelhaprime.com.br",
+   "data": "2026-10-08 09:27"
   }
  ],
  "timeline": [
@@ -91,23 +108,28 @@
    "data": "07/10",
    "whatsapp": 20,
    "email": 8
+  },
+  {
+   "data": "08/10",
+   "whatsapp": 23,
+   "email": 12
   }
  ],
  "por_bairro": {
-  "Jaçanã": 30,
-  "Vila Sabrina": 30,
-  "Vila Santa Catarina": 27,
-  "Casa Verde": 26,
-  "Jardim Picerni": 25,
+  "Jaçanã": 28,
+  "Vila Sabrina": 27,
+  "Vila Santa Catarina": 25,
+  "Jardim Picerni": 22,
   "Jardim Brasil": 22,
-  "Lauzane Paulista": 21,
-  "Carandiru": 20,
-  "Santana": 18,
-  "Mandaqui": 15
+  "Casa Verde": 21,
+  "Lauzane Paulista": 20,
+  "Carandiru": 15,
+  "Mandaqui": 14,
+  "Vila Gustavo": 14
  },
  "canais": {
-  "moveis": 63,
-  "fixos": 247,
+  "moveis": 55,
+  "fixos": 210,
   "sem_telefone": 29
  },
  "sdr": {
