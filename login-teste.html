@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Teste mínimo de login Meta — Femba</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1f33;--card:#102a45;--line:#244c70;--blue:#4aa3e8;--text:#eef5fb;--muted:#a9bdd0;--ok:#6bd19b;--warn:#f2c66d;--err:#ff9187}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;padding:28px 16px}
+    main{max-width:680px;margin:0 auto}.brand{font-weight:800;font-size:22px;letter-spacing:.02em;color:#fff}.subbrand{font-size:12px;letter-spacing:.12em;color:var(--muted)}
+    h1{font-size:25px;line-height:1.2;margin:28px 0 10px}p{color:var(--muted)}.card{margin-top:20px;padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+    .info{font-size:14px}.info strong{color:var(--text)}button{margin-top:16px;border:0;border-radius:10px;padding:14px 18px;background:var(--blue);color:#071827;font-weight:800;font-size:16px;cursor:pointer}
+    button:disabled{opacity:.6;cursor:not-allowed}.status{margin-top:18px;padding:14px;border-radius:10px;background:#0b1f33;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--text)}
+    .small{font-size:12px;line-height:1.5;margin-top:14px}.result{margin:12px 0 0;padding-left:20px}.ok{color:var(--ok)}.warn{color:var(--warn)}.err{color:var(--err)}footer{font-size:12px;color:var(--muted);margin-top:18px}
+  </style>
+</head>
+<body>
+<main>
+  <div class="brand">Femba</div>
+  <div class="subbrand">TESTE TÉCNICO CONTROLADO</div>
+  <h1>Login Meta — acesso básico ao Instagram</h1>
+  <p>Esta página testa o fluxo de login com a configuração já existente da Femba. O teste só começa quando você clicar no botão.</p>
+  <section class="card" aria-labelledby="test-title">
+    <h2 id="test-title" style="font-size:18px;margin:0 0 8px">O que será verificado</h2>
+    <p class="info">1. Se a Meta abre e conclui o Login for Business.<br>2. Se as permissões <strong>instagram_basic</strong> e <strong>pages_show_list</strong> aparecem como concedidas.<br>3. Se a Página Femba e a conta profissional do Instagram vinculada são retornadas.</p>
+    <p class="info">O botão usa somente <strong>config_id</strong> — não envia um parâmetro <strong>scope</strong>. Esta página não mostra, registra em arquivo nem envia o token a outro serviço.</p>
+    <button id="start" type="button" disabled>Carregando o componente de login…</button>
+    <div id="status" class="status" role="status" aria-live="polite">Aguardando o carregamento do componente oficial da Meta.</div>
+    <ol id="results" class="result"></ol>
+    <p class="small">Use apenas sua própria conta autorizada no app Femba Prospecção. Se aparecer o erro “Invalid Scopes: email” ou uma tela diferente, não tente de novo: anote a mensagem e avise o Jarvis.</p>
+  </section>
+  <footer>App Meta Femba Prospecção · configuração de usuário: Integração do Instagram · ID 1640053124159573 · teste sem publicação de conteúdo.</footer>
+</main>
+<script>
+'use strict';
+const APP_ID = '2506371123202809';
+const CONFIG_ID = '1640053124159573';
+const FEMBA_PAGE_ID = '299626023466710';
+const startButton = document.getElementById('start');
+const statusBox = document.getElementById('status');
+const results = document.getElementById('results');
+let attempted = false;
+
+function setStatus(message, kind) {
+  statusBox.textContent = message;
+  statusBox.className = 'status' + (kind ? ' ' + kind : '');
+}
+function addResult(message, kind) {
+  const li = document.createElement('li');
+  li.textContent = message;
+  if (kind) li.className = kind;
+  results.appendChild(li);
+}
+function graphCall(path) {
+  return new Promise(resolve => {
+    try { FB.api(path, response => resolve(response || {})); }
+    catch (_) { resolve({error:{code:'CLIENT_CALL_FAILED'}}); }
+  });
+}
+function errorCode(response) {
+  return response && response.error && response.error.code !== undefined
+    ? String(response.error.code) : 'sem código';
+}
+async function checkAfterLogin() {
+  setStatus('Login concluído. Conferindo permissões e Página Femba…');
+  const permissions = await graphCall('/me/permissions');
+  if (permissions.error) {
+    addResult('A consulta de permissões falhou (código ' + errorCode(permissions) + ').', 'warn');
+  } else {
+    const rows = Array.isArray(permissions.data) ? permissions.data : [];
+    for (const name of ['instagram_basic','pages_show_list']) {
+      const row = rows.find(item => item && item.permission === name);
+      addResult(name + ': ' + (row ? row.status : 'não retornada'), row && row.status === 'granted' ? 'ok' : 'warn');
+    }
+  }
+  const pages = await graphCall('/me/accounts?fields=id,name,tasks');
+  if (pages.error) {
+    addResult('Consulta de Páginas falhou (código ' + errorCode(pages) + ').', 'warn');
+    setStatus('O login foi concluído; as consultas de verificação terminaram com aviso.', 'warn');
+    return;
+  }
+  const data = Array.isArray(pages.data) ? pages.data : [];
+  const femba = data.find(page => page && String(page.id) === FEMBA_PAGE_ID);
+  addResult('Página Femba retornada por /me/accounts: ' + (femba ? 'sim' : 'não'), femba ? 'ok' : 'warn');
+  if (!femba) {
+    setStatus('O login foi concluído. A Página FEMBA não apareceu na lista retornada; não repita o login.', 'warn');
+    return;
+  }
+  const instagram = await graphCall('/' + FEMBA_PAGE_ID + '?fields=instagram_business_account');
+  if (instagram.error) {
+    addResult('Consulta da conta Instagram falhou (código ' + errorCode(instagram) + ').', 'warn');
+    setStatus('O login foi concluído; a consulta da conta profissional terminou com aviso.', 'warn');
+    return;
+  }
+  const linked = Boolean(instagram.instagram_business_account && instagram.instagram_business_account.id);
+  addResult('Conta profissional do Instagram vinculada retornada: ' + (linked ? 'sim' : 'não'), linked ? 'ok' : 'warn');
+  setStatus('Teste concluído. O resultado está resumido abaixo; nenhum token foi exibido.', linked ? 'ok' : 'warn');
+}
+
+window.fbAsyncInit = function () {
+  try {
+    FB.init({appId: APP_ID, xfbml: false, version: 'v26.0'});
+    startButton.disabled = false;
+    startButton.textContent = 'Iniciar teste de login Meta';
+    setStatus('Pronto. O login ainda não foi iniciado.');
+  } catch (_) {
+    setStatus('Não foi possível inicializar o componente da Meta. Não inicie outro teste.', 'err');
+  }
+};
+startButton.addEventListener('click', function () {
+  if (attempted || !window.FB) return;
+  attempted = true;
+  startButton.disabled = true;
+  startButton.textContent = 'Teste iniciado — aguarde';
+  setStatus('Aguardando a resposta da janela oficial da Meta. Não clique novamente.');
+  try {
+    FB.login(function (response) {
+      if (!response || !response.authResponse) {
+        setStatus('A Meta não retornou uma autorização concluída. Anote a mensagem exibida na janela; não tente de novo.', 'warn');
+        return;
+      }
+      checkAfterLogin().catch(() => setStatus('O login retornou, mas a verificação falhou. Não tente de novo; informe o Jarvis.', 'warn'));
+    }, {config_id: CONFIG_ID});
+  } catch (_) {
+    setStatus('O componente da Meta não iniciou o diálogo. Não tente de novo; informe o Jarvis.', 'err');
+  }
+});
+</script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/pt_BR/sdk.js" id="facebook-jssdk"></script>
+</body>
+</html>
