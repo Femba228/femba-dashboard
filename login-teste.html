@@ -13,7 +13,7 @@
     h1{font-size:25px;line-height:1.2;margin:28px 0 10px}p{color:var(--muted)}.card{margin-top:20px;padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
     .info{font-size:14px}.info strong{color:var(--text)}button{margin-top:16px;border:0;border-radius:10px;padding:14px 18px;background:var(--blue);color:#071827;font-weight:800;font-size:16px;cursor:pointer}
     button:disabled{opacity:.6;cursor:not-allowed}.status{margin-top:18px;padding:14px;border-radius:10px;background:#0b1f33;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--text)}
-    .small{font-size:12px;line-height:1.5;margin-top:14px}.result{margin:12px 0 0;padding-left:20px}.ok{color:var(--ok)}.warn{color:var(--warn)}.err{color:var(--err)}footer{font-size:12px;color:var(--muted);margin-top:18px}
+    .small{font-size:12px;line-height:1.5;margin-top:14px}.result{margin:12px 0 0;padding-left:20px}.ok{color:var(--ok)}.warn{color:var(--warn)}.err{color:var(--err)}footer{font-size:12px;color:var(--muted);margin-top:18px}.capture{margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:10px;background:#0b1f33;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--text);font:13px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}.capture-done{border-color:var(--ok)}
   </style>
 </head>
 <body>
@@ -25,11 +25,12 @@
   <section class="card" aria-labelledby="test-title">
     <h2 id="test-title" style="font-size:18px;margin:0 0 8px">O que será verificado</h2>
     <p class="info">1. Se a Meta abre e conclui o Login for Business.<br>2. Se as permissões <strong>instagram_basic</strong> e <strong>pages_show_list</strong> aparecem como concedidas.<br>3. Se a Página Femba e a conta profissional do Instagram vinculada são retornadas.</p>
-    <p class="info">O botão usa somente <strong>config_id</strong> — não envia um parâmetro <strong>scope</strong>. Esta página não mostra, registra em arquivo nem envia o token a outro serviço.</p>
+    <p class="info">O botão usa somente <strong>config_id</strong> — não envia um parâmetro <strong>scope</strong>. A captura abaixo examina a chamada OAuth somente nesta aba e exibe apenas indicadores; não mostra, salva nem envia URLs, tokens, códigos ou valores de parâmetros.</p>
     <button id="start" type="button" disabled>Carregando o componente de login…</button>
     <div id="status" class="status" role="status" aria-live="polite">Aguardando o carregamento do componente oficial da Meta.</div>
+    <div id="capture" class="capture" role="status" aria-live="polite">Captura OAuth: aguardando o primeiro clique. Nenhum login foi iniciado.</div>
     <ol id="results" class="result"></ol>
-    <p class="small">Use apenas sua própria conta autorizada no app Femba Prospecção. Se aparecer o erro “Invalid Scopes: email” ou uma tela diferente, não tente de novo: anote a mensagem e avise o Jarvis.</p>
+    <p class="small">Use apenas sua própria conta autorizada no app Femba Prospecção. Se aparecer erro ou a captura não identificar o pedido OAuth, não tente de novo: avise o Jarvis. A página não publica nem envia a captura a outro serviço.</p>
   </section>
   <footer>App Meta Femba Prospecção · configuração de usuário: Integração do Instagram · ID 1640053124159573 · teste sem publicação de conteúdo.</footer>
 </main>
@@ -41,7 +42,10 @@ const FEMBA_PAGE_ID = '299626023466710';
 const startButton = document.getElementById('start');
 const statusBox = document.getElementById('status');
 const results = document.getElementById('results');
+const captureBox = document.getElementById('capture');
 let attempted = false;
+let captureArmed = false;
+let captureState = {oauthSeen:false, method:'not_seen', configIdPresent:false, configIdMatches:false, scopePresent:false, scopeHasEmail:false, scopeHasOpenId:false};
 
 function setStatus(message, kind) {
   statusBox.textContent = message;
@@ -53,6 +57,101 @@ function addResult(message, kind) {
   if (kind) li.className = kind;
   results.appendChild(li);
 }
+function renderCapture() {
+  if (!captureState.oauthSeen) {
+    captureBox.textContent = captureArmed
+      ? 'Captura armada. Aguardando o pedido OAuth do popup; nenhum valor sensível será mostrado.'
+      : 'Captura OAuth pronta. Nenhum login foi iniciado.';
+    return;
+  }
+  const labels = {
+    oauthSeen: 'Pedido OAuth detectado',
+    method: 'Método do pedido',
+    configIdPresent: 'config_id presente',
+    configIdMatches: 'config_id corresponde ao esperado',
+    scopePresent: 'scope presente',
+    scopeHasEmail: 'scope contém email',
+    scopeHasOpenId: 'scope contém openid'
+  };
+  captureBox.textContent = Object.entries(labels).map(([key,label]) => label + ': ' + captureState[key]).join('\n');
+  captureBox.classList.add('capture-done');
+  return captureBox.textContent;
+}
+function isOAuthEndpoint(hostname, pathname) {
+  return /(^|\.)facebook\.com$/i.test(hostname) && /\/(dialog\/oauth|oauth\/authorize)(\/.*)?$/i.test(pathname);
+}
+function inspectOAuthParts(hostname, pathname, method, configIdValue, scopeValue) {
+  if (!captureArmed || !isOAuthEndpoint(hostname, pathname)) return false;
+  const scopes = String(scopeValue || '').toLowerCase().split(/[\s,]+/).filter(Boolean);
+  captureState = {
+    oauthSeen: true,
+    method: String(method || 'unknown').toUpperCase(),
+    configIdPresent: configIdValue !== null && configIdValue !== undefined,
+    configIdMatches: configIdValue === CONFIG_ID,
+    scopePresent: scopeValue !== null && scopeValue !== undefined,
+    scopeHasEmail: scopes.includes('email'),
+    scopeHasOpenId: scopes.includes('openid')
+  };
+  captureArmed = false;
+  renderCapture();
+  return true;
+}
+function queryValues(u, name) {
+  const all = u.searchParams.getAll(name);
+  return all.length ? all.join(',') : null;
+}
+function inspectOAuthUrl(rawUrl, method) {
+  try {
+    const u = new URL(rawUrl, location.href);
+    return inspectOAuthParts(u.hostname, u.pathname, method, queryValues(u, 'config_id'), queryValues(u, 'scope'));
+  } catch (_) { return false; }
+}
+function formFieldValue(form, name) {
+  const values = [];
+  for (const el of Array.from(form.elements || [])) {
+    if (el && el.name === name && !el.disabled) values.push(String(el.value || ''));
+  }
+  return values.length ? values.join(',') : null;
+}
+function formActionQueryValue(form, name) {
+  try {
+    return queryValues(new URL(form.action || location.href, location.href), name);
+  } catch (_) { return null; }
+}
+function inspectOAuthForm(form) {
+  if (!captureArmed || !form) return false;
+  try {
+    const u = new URL(form.action || location.href, location.href);
+    const formConfigId = formFieldValue(form, 'config_id');
+    const formScope = formFieldValue(form, 'scope');
+    const configId = formConfigId !== null ? formConfigId : formActionQueryValue(form, 'config_id');
+    const scope = formScope !== null ? formScope : formActionQueryValue(form, 'scope');
+    return inspectOAuthParts(u.hostname, u.pathname, form.method || 'GET', configId, scope);
+  } catch (_) { return false; }
+}
+function installOAuthCapture() {
+  const originalOpen = window.open;
+  window.open = function(url, target, features) {
+    if (typeof url === 'string') inspectOAuthUrl(url, 'GET');
+    return originalOpen.apply(this, arguments);
+  };
+  const proto = HTMLFormElement.prototype;
+  const originalSubmit = proto.submit;
+  const originalRequestSubmit = proto.requestSubmit;
+  proto.submit = function() {
+    inspectOAuthForm(this);
+    return originalSubmit.apply(this, arguments);
+  };
+  if (originalRequestSubmit) {
+    proto.requestSubmit = function() {
+      inspectOAuthForm(this);
+      return originalRequestSubmit.apply(this, arguments);
+    };
+  }
+  document.addEventListener('submit', event => inspectOAuthForm(event.target), true);
+}
+installOAuthCapture();
+renderCapture();
 function graphCall(path) {
   return new Promise(resolve => {
     try { FB.api(path, response => resolve(response || {})); }
@@ -112,6 +211,8 @@ window.fbAsyncInit = function () {
 startButton.addEventListener('click', function () {
   if (attempted || !window.FB) return;
   attempted = true;
+  captureArmed = true;
+  renderCapture();
   startButton.disabled = true;
   startButton.textContent = 'Teste iniciado — aguarde';
   setStatus('Aguardando a resposta da janela oficial da Meta. Não clique novamente.');
