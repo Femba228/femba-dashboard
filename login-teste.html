@@ -21,18 +21,18 @@
   <div class="brand">Femba</div>
   <div class="subbrand">TESTE TÉCNICO CONTROLADO</div>
   <h1>Login Meta — acesso básico ao Instagram</h1>
-  <p>Esta página testa o fluxo de login com a configuração já existente da Femba. O teste só começa quando você clicar no botão.</p>
+  <p>Esta página verifica o retorno do Login for Business da Meta, sem publicar conteúdo. O teste só começa quando você clicar no botão.</p>
   <section class="card" aria-labelledby="test-title">
     <h2 id="test-title" style="font-size:18px;margin:0 0 8px">O que será verificado</h2>
-    <p class="info">1. Se a Meta abre e conclui o Login for Business.<br>2. Se as permissões <strong>instagram_basic</strong> e <strong>pages_show_list</strong> aparecem como concedidas.<br>3. Se a Página Femba e a conta profissional do Instagram vinculada são retornadas.</p>
-    <p class="info">O botão usa somente <strong>config_id</strong> — não envia um parâmetro <strong>scope</strong>. A captura abaixo examina a chamada OAuth somente nesta aba e exibe apenas indicadores; não mostra, salva nem envia URLs, tokens, códigos ou valores de parâmetros.</p>
+    <p class="info">1. Se a Meta conclui o Login for Business.<br>2. Se <strong>instagram_basic</strong> e <strong>pages_show_list</strong> foram concedidas.<br>3. Se a Página Femba e a conta profissional do Instagram vinculada são retornadas.</p>
+    <p class="info">A captura exibe apenas indicadores técnicos do pedido e do retorno. Não mostra nem armazena URLs completas, tokens, códigos, mensagens de erro completas ou valores livres de parâmetros.</p>
     <button id="start" type="button" disabled>Carregando o componente de login…</button>
     <div id="status" class="status" role="status" aria-live="polite">Aguardando o carregamento do componente oficial da Meta.</div>
-    <div id="capture" class="capture" role="status" aria-live="polite">Captura OAuth: aguardando o primeiro clique. Nenhum login foi iniciado.</div>
+    <div id="capture" class="capture" role="status" aria-live="polite">Diagnóstico pronto. Nenhum login foi iniciado.</div>
     <ol id="results" class="result"></ol>
-    <p class="small">Use apenas sua própria conta autorizada no app Femba Prospecção. Se aparecer erro ou a captura não identificar o pedido OAuth, não tente de novo: avise o Jarvis. A página não publica nem envia a captura a outro serviço.</p>
+    <p class="small">Use sua própria conta autorizada no app Femba Prospecção. Após o teste, compartilhe somente os indicadores exibidos aqui, sem barra de endereço ou credenciais.</p>
   </section>
-  <footer>App Meta Femba Prospecção · configuração de usuário: Integração do Instagram · ID 1640053124159573 · teste sem publicação de conteúdo.</footer>
+  <footer>App Meta Femba Prospecção · configuração “Integração do Instagram” · ID 1640053124159573 · teste sem publicação.</footer>
 </main>
 <script>
 'use strict';
@@ -43,9 +43,14 @@ const startButton = document.getElementById('start');
 const statusBox = document.getElementById('status');
 const results = document.getElementById('results');
 const captureBox = document.getElementById('capture');
+const allowedStatuses = new Set(['connected','not_authorized','unknown']);
 let attempted = false;
 let captureArmed = false;
-let captureState = {oauthSeen:false, method:'not_seen', configIdPresent:false, configIdMatches:false, scopePresent:false, scopeHasEmail:false, scopeHasOpenId:false};
+let callbackTimer = null;
+let captureState = {
+  request: {seen:false,method:'not_seen',endpoint:'not_seen',configIdPresent:false,configIdMatches:false,scopePresent:false,scopeHasEmail:false,scopeHasOpenId:false,responseType:'not_present',redirectUriPresent:false},
+  callback: {state:'not_started',status:'not_returned',authResponsePresent:false,accessTokenPresent:false,codePresent:false,errorPresent:false,errorCode:'none',errorSubcode:'none'}
+};
 
 function setStatus(message, kind) {
   statusBox.textContent = message;
@@ -57,175 +62,229 @@ function addResult(message, kind) {
   if (kind) li.className = kind;
   results.appendChild(li);
 }
+function numericCode(value) {
+  if (value === undefined || value === null || value === '') return 'none';
+  const text = String(value);
+  return /^\d{1,8}$/.test(text) ? text : 'non_numeric_redacted';
+}
+function safeStatus(value) {
+  if (!value) return 'missing';
+  return allowedStatuses.has(value) ? value : 'other_redacted';
+}
+function safeResponseType(value) {
+  if (!value) return 'not_present';
+  const normalized = String(value).toLowerCase().trim().split(/\s+/).sort().join(' ');
+  if (normalized === 'code' || normalized === 'token' || normalized === 'code token') return normalized;
+  return 'other_present';
+}
+function hasValue(value) {
+  if (value === undefined || value === null) return false;
+  return String(value).length > 0;
+}
 function renderCapture() {
-  if (!captureState.oauthSeen) {
-    captureBox.textContent = captureArmed
-      ? 'Captura armada. Aguardando o pedido OAuth do popup; nenhum valor sensível será mostrado.'
-      : 'Captura OAuth pronta. Nenhum login foi iniciado.';
-    return;
-  }
-  const labels = {
-    oauthSeen: 'Pedido OAuth detectado',
-    method: 'Método do pedido',
-    configIdPresent: 'config_id presente',
-    configIdMatches: 'config_id corresponde ao esperado',
-    scopePresent: 'scope presente',
-    scopeHasEmail: 'scope contém email',
-    scopeHasOpenId: 'scope contém openid'
-  };
-  captureBox.textContent = Object.entries(labels).map(([key,label]) => label + ': ' + captureState[key]).join('\n');
+  const r = captureState.request;
+  const c = captureState.callback;
+  const lines = [
+    'PEDIDO OAUTH',
+    'detectado: ' + r.seen,
+    'método: ' + r.method,
+    'endpoint: ' + r.endpoint,
+    'config_id presente: ' + r.configIdPresent,
+    'config_id corresponde à configuração: ' + r.configIdMatches,
+    'scope presente: ' + r.scopePresent,
+    'scope contém email: ' + r.scopeHasEmail,
+    'scope contém openid: ' + r.scopeHasOpenId,
+    'response_type: ' + r.responseType,
+    'redirect_uri presente: ' + r.redirectUriPresent,
+    '',
+    'RETORNO DO SDK',
+    'callback: ' + c.state,
+    'status: ' + c.status,
+    'authResponse presente: ' + c.authResponsePresent,
+    'access token presente: ' + c.accessTokenPresent,
+    'authorization code presente: ' + c.codePresent,
+    'objeto de erro presente: ' + c.errorPresent,
+    'código numérico do erro: ' + c.errorCode,
+    'subcódigo numérico: ' + c.errorSubcode
+  ];
+  captureBox.textContent = lines.join('\n');
   captureBox.classList.add('capture-done');
   return captureBox.textContent;
 }
 function isOAuthEndpoint(hostname, pathname) {
-  return /(^|\.)facebook\.com$/i.test(hostname) && /\/(dialog\/oauth|oauth\/authorize)(\/.*)?$/i.test(pathname);
+  return /(^|\.)facebook\.com$/i.test(hostname) && /\/(dialog\/oauth|oauth\/authorize|facebook_business_extension\/oauth)(\/.*)?$/i.test(pathname);
 }
-function inspectOAuthParts(hostname, pathname, method, configIdValue, scopeValue) {
-  if (!captureArmed || !isOAuthEndpoint(hostname, pathname)) return false;
-  const scopes = String(scopeValue || '').toLowerCase().split(/[\s,]+/).filter(Boolean);
-  captureState = {
-    oauthSeen: true,
-    method: String(method || 'unknown').toUpperCase(),
-    configIdPresent: configIdValue !== null && configIdValue !== undefined,
-    configIdMatches: configIdValue === CONFIG_ID,
-    scopePresent: scopeValue !== null && scopeValue !== undefined,
-    scopeHasEmail: scopes.includes('email'),
-    scopeHasOpenId: scopes.includes('openid')
+function isMetaHost(hostname) {
+  return /(^|\.)(facebook\.com|fb\.com|facebook\.net)$/i.test(hostname);
+}
+function scalarValue(value) {
+  return Array.isArray(value) ? value.join(',') : value;
+}
+function classifyOAuthRequest(hostname, pathname, method, configId, scope, responseType, redirectUri) {
+  if (!captureArmed || !isOAuthEndpoint(hostname, pathname) || captureState.request.seen) return false;
+  const scopes = String(scope || '').toLowerCase().split(/[\s,]+/).filter(Boolean);
+  const path = pathname.toLowerCase();
+  captureState.request = {
+    seen:true,
+    method:String(method || 'unknown').toUpperCase(),
+    endpoint:path.includes('facebook_business_extension') ? 'facebook_business_extension/oauth' : (path.includes('dialog/oauth') ? 'dialog/oauth' : 'oauth/authorize'),
+    configIdPresent:hasValue(configId),
+    configIdMatches:scalarValue(configId) === CONFIG_ID,
+    scopePresent:hasValue(scope),
+    scopeHasEmail:scopes.includes('email'),
+    scopeHasOpenId:scopes.includes('openid'),
+    responseType:safeResponseType(responseType),
+    redirectUriPresent:hasValue(redirectUri)
   };
   captureArmed = false;
   renderCapture();
   return true;
 }
-function queryValues(u, name) {
-  const all = u.searchParams.getAll(name);
-  return all.length ? all.join(',') : null;
+function queryValue(url, name) {
+  const values = url.searchParams.getAll(name);
+  return values.length ? values.join(',') : null;
 }
 function inspectOAuthUrl(rawUrl, method) {
   try {
-    const u = new URL(rawUrl, location.href);
-    return inspectOAuthParts(u.hostname, u.pathname, method, queryValues(u, 'config_id'), queryValues(u, 'scope'));
+    const url = new URL(rawUrl, location.href);
+    if (!isMetaHost(url.hostname)) return false;
+    return classifyOAuthRequest(url.hostname,url.pathname,method,queryValue(url,'config_id'),queryValue(url,'scope'),queryValue(url,'response_type'),queryValue(url,'redirect_uri'));
   } catch (_) { return false; }
 }
 function formFieldValue(form, name) {
   const values = [];
-  for (const el of Array.from(form.elements || [])) {
-    if (el && el.name === name && !el.disabled) values.push(String(el.value || ''));
+  for (const element of Array.from(form.elements || [])) {
+    if (element && element.name === name && !element.disabled) values.push(String(element.value || ''));
   }
   return values.length ? values.join(',') : null;
 }
-function formActionQueryValue(form, name) {
-  try {
-    return queryValues(new URL(form.action || location.href, location.href), name);
-  } catch (_) { return null; }
+function actionQueryValue(form, name) {
+  try { return queryValue(new URL(form.action || location.href, location.href), name); }
+  catch (_) { return null; }
 }
 function inspectOAuthForm(form) {
   if (!captureArmed || !form) return false;
   try {
-    const u = new URL(form.action || location.href, location.href);
-    const formConfigId = formFieldValue(form, 'config_id');
-    const formScope = formFieldValue(form, 'scope');
-    const configId = formConfigId !== null ? formConfigId : formActionQueryValue(form, 'config_id');
-    const scope = formScope !== null ? formScope : formActionQueryValue(form, 'scope');
-    return inspectOAuthParts(u.hostname, u.pathname, form.method || 'GET', configId, scope);
+    const url = new URL(form.action || location.href, location.href);
+    if (!isMetaHost(url.hostname) || !isOAuthEndpoint(url.hostname,url.pathname)) return false;
+    const value = name => {
+      const field = formFieldValue(form,name);
+      return field !== null ? field : actionQueryValue(form,name);
+    };
+    return classifyOAuthRequest(url.hostname,url.pathname,form.method || 'GET',value('config_id'),value('scope'),value('response_type'),value('redirect_uri'));
   } catch (_) { return false; }
 }
 function installOAuthCapture() {
   const originalOpen = window.open;
-  window.open = function(url, target, features) {
-    if (typeof url === 'string') inspectOAuthUrl(url, 'GET');
-    return originalOpen.apply(this, arguments);
+  window.open = function(url,target,features) {
+    if (typeof url === 'string') inspectOAuthUrl(url,'GET');
+    return originalOpen.apply(this,arguments);
   };
-  const proto = HTMLFormElement.prototype;
-  const originalSubmit = proto.submit;
-  const originalRequestSubmit = proto.requestSubmit;
-  proto.submit = function() {
-    inspectOAuthForm(this);
-    return originalSubmit.apply(this, arguments);
-  };
-  if (originalRequestSubmit) {
-    proto.requestSubmit = function() {
-      inspectOAuthForm(this);
-      return originalRequestSubmit.apply(this, arguments);
-    };
-  }
-  document.addEventListener('submit', event => inspectOAuthForm(event.target), true);
+  const prototype = HTMLFormElement.prototype;
+  const originalSubmit = prototype.submit;
+  const originalRequestSubmit = prototype.requestSubmit;
+  prototype.submit = function() { inspectOAuthForm(this); return originalSubmit.apply(this,arguments); };
+  if (originalRequestSubmit) prototype.requestSubmit = function() { inspectOAuthForm(this); return originalRequestSubmit.apply(this,arguments); };
+  document.addEventListener('submit',event => inspectOAuthForm(event.target),true);
 }
-installOAuthCapture();
-renderCapture();
 function graphCall(path) {
   return new Promise(resolve => {
-    try { FB.api(path, response => resolve(response || {})); }
+    try { FB.api(path,response => resolve(response || {})); }
     catch (_) { resolve({error:{code:'CLIENT_CALL_FAILED'}}); }
   });
-}
-function errorCode(response) {
-  return response && response.error && response.error.code !== undefined
-    ? String(response.error.code) : 'sem código';
 }
 async function checkAfterLogin() {
   setStatus('Login concluído. Conferindo permissões e Página Femba…');
   const permissions = await graphCall('/me/permissions');
-  if (permissions.error) {
-    addResult('A consulta de permissões falhou (código ' + errorCode(permissions) + ').', 'warn');
-  } else {
+  if (permissions.error) addResult('Consulta de permissões falhou; código: ' + numericCode(permissions.error.code),'warn');
+  else {
     const rows = Array.isArray(permissions.data) ? permissions.data : [];
     for (const name of ['instagram_basic','pages_show_list']) {
       const row = rows.find(item => item && item.permission === name);
-      addResult(name + ': ' + (row ? row.status : 'não retornada'), row && row.status === 'granted' ? 'ok' : 'warn');
+      const status = row && ['granted','declined','expired'].includes(row.status) ? row.status : (row ? 'other_redacted' : 'não retornada');
+      addResult(name + ': ' + status,row && row.status === 'granted' ? 'ok' : 'warn');
     }
   }
   const pages = await graphCall('/me/accounts?fields=id,name,tasks');
   if (pages.error) {
-    addResult('Consulta de Páginas falhou (código ' + errorCode(pages) + ').', 'warn');
-    setStatus('O login foi concluído; as consultas de verificação terminaram com aviso.', 'warn');
+    addResult('Consulta de Páginas falhou; código: ' + numericCode(pages.error.code),'warn');
+    setStatus('Login concluído; a consulta da Página terminou com aviso.','warn');
     return;
   }
   const data = Array.isArray(pages.data) ? pages.data : [];
   const femba = data.find(page => page && String(page.id) === FEMBA_PAGE_ID);
-  addResult('Página Femba retornada por /me/accounts: ' + (femba ? 'sim' : 'não'), femba ? 'ok' : 'warn');
-  if (!femba) {
-    setStatus('O login foi concluído. A Página FEMBA não apareceu na lista retornada; não repita o login.', 'warn');
-    return;
-  }
+  addResult('Página Femba retornada: ' + (femba ? 'sim' : 'não'),femba ? 'ok' : 'warn');
+  if (!femba) { setStatus('Login concluído; Página Femba não retornada.','warn'); return; }
   const instagram = await graphCall('/' + FEMBA_PAGE_ID + '?fields=instagram_business_account');
   if (instagram.error) {
-    addResult('Consulta da conta Instagram falhou (código ' + errorCode(instagram) + ').', 'warn');
-    setStatus('O login foi concluído; a consulta da conta profissional terminou com aviso.', 'warn');
+    addResult('Consulta do Instagram falhou; código: ' + numericCode(instagram.error.code),'warn');
+    setStatus('Login concluído; a consulta do Instagram terminou com aviso.','warn');
     return;
   }
-  const linked = Boolean(instagram.instagram_business_account && instagram.instagram_business_account.id);
-  addResult('Conta profissional do Instagram vinculada retornada: ' + (linked ? 'sim' : 'não'), linked ? 'ok' : 'warn');
-  setStatus('Teste concluído. O resultado está resumido abaixo; nenhum token foi exibido.', linked ? 'ok' : 'warn');
+  const linked = !!(instagram.instagram_business_account && instagram.instagram_business_account.id);
+  addResult('Instagram profissional vinculado retornado: ' + (linked ? 'sim' : 'não'),linked ? 'ok' : 'warn');
+  setStatus('Verificação de leitura concluída. Nenhum conteúdo foi publicado.',linked ? 'ok' : 'warn');
 }
-
-window.fbAsyncInit = function () {
+function handleSdkCallback(response) {
+  if (callbackTimer) clearTimeout(callbackTimer);
+  const auth = response && response.authResponse;
+  const tokenPresent = !!(auth && typeof auth.accessToken === 'string' && auth.accessToken.length > 0);
+  const codePresent = !!(auth && typeof auth.code === 'string' && auth.code.length > 0);
+  const error = response && response.error;
+  captureState.callback = {
+    state:'received',
+    status:safeStatus(response && response.status),
+    authResponsePresent:!!auth,
+    accessTokenPresent:tokenPresent,
+    codePresent:codePresent,
+    errorPresent:!!error,
+    errorCode:numericCode(error && error.code),
+    errorSubcode:numericCode(error && error.error_subcode)
+  };
+  renderCapture();
+  if (!response || !auth) {
+    setStatus('A Meta não retornou uma autorização utilizável. Os indicadores estão registrados abaixo.','warn');
+    return;
+  }
+  if (!tokenPresent) {
+    if (codePresent) setStatus('A Meta retornou um authorization code, mas esta página não troca códigos por tokens. Nenhuma consulta Graph foi feita.','warn');
+    else setStatus('A resposta não contém um token utilizável. Nenhuma consulta Graph foi feita.','warn');
+    return;
+  }
+  setStatus('Autorização recebida. Iniciando somente consultas de leitura.','info');
+  checkAfterLogin().catch(() => setStatus('A autorização foi recebida, mas a verificação falhou. Nenhum token foi exibido.','warn'));
+}
+installOAuthCapture();
+renderCapture();
+window.fbAsyncInit = function() {
   try {
-    FB.init({appId: APP_ID, xfbml: false, version: 'v26.0'});
+    FB.init({appId:APP_ID,xfbml:false,version:'v26.0'});
     startButton.disabled = false;
     startButton.textContent = 'Iniciar teste de login Meta';
-    setStatus('Pronto. O login ainda não foi iniciado.');
-  } catch (_) {
-    setStatus('Não foi possível inicializar o componente da Meta. Não inicie outro teste.', 'err');
-  }
+    setStatus('Pronto. Nenhum login foi iniciado.');
+  } catch (_) { setStatus('O SDK da Meta não iniciou.','err'); }
 };
-startButton.addEventListener('click', function () {
+startButton.addEventListener('click',function() {
   if (attempted || !window.FB) return;
   attempted = true;
   captureArmed = true;
+  captureState.callback.state = 'waiting';
   renderCapture();
   startButton.disabled = true;
   startButton.textContent = 'Teste iniciado — aguarde';
-  setStatus('Aguardando a resposta da janela oficial da Meta. Não clique novamente.');
-  try {
-    FB.login(function (response) {
-      if (!response || !response.authResponse) {
-        setStatus('A Meta não retornou uma autorização concluída. Anote a mensagem exibida na janela; não tente de novo.', 'warn');
-        return;
-      }
-      checkAfterLogin().catch(() => setStatus('O login retornou, mas a verificação falhou. Não tente de novo; informe o Jarvis.', 'warn'));
-    }, {config_id: CONFIG_ID});
-  } catch (_) {
-    setStatus('O componente da Meta não iniciou o diálogo. Não tente de novo; informe o Jarvis.', 'err');
+  setStatus('Aguardando o retorno da janela oficial da Meta.');
+  callbackTimer = setTimeout(function() {
+    if (captureState.callback.state !== 'waiting') return;
+    captureState.callback.state = 'timeout';
+    renderCapture();
+    setStatus('A página não recebeu callback em 60 segundos. Confira os indicadores abaixo; não reinicie o teste antes de revisarmos o resultado.','warn');
+  },60000);
+  try { FB.login(handleSdkCallback,{config_id:CONFIG_ID}); }
+  catch (_) {
+    if (callbackTimer) clearTimeout(callbackTimer);
+    captureState.callback.state = 'exception';
+    renderCapture();
+    setStatus('O SDK não iniciou o diálogo. Confira os indicadores registrados.','err');
   }
 });
 </script>
