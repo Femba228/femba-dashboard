@@ -94,7 +94,7 @@
       <label for="porque" style="margin-top:12px">Detalhe <span class="opt">(opcional, 1 frase basta)</span></label>
       <textarea id="porque" placeholder="Ex.: fornecedor deu desconto até fim do mês; cliente de escola sempre pede nessa época…"></textarea>
 
-      <label>Foto do produto <span style="color:var(--err)">*</span> <span class="opt">(obrigatória)</span></label>
+      <label>Foto do produto <span class="opt">(obrigatória)</span></label>
       <div class="file">
         <input type="file" id="foto" accept="image/*">
         <label for="foto" class="filebtn" id="fotoBtn">📷 &nbsp;Tirar foto ou escolher da galeria</label>
@@ -131,7 +131,7 @@ $('nome').addEventListener('change',()=>{ $('nomeOutro').style.display = $('nome
 $('foto').addEventListener('change',e=>{
   const f=e.target.files[0]; if(!f) return;
   const img=new Image(), r=new FileReader();
-  r.onload=()=>{ img.onload=>{}; img.onload=()=>{
+  r.onload=()=>{ img.onload=()=>{
     const max=1200, sc=Math.min(1,max/Math.max(img.width,img.height));
     const cv=document.createElement('canvas');
     cv.width=img.width*sc; cv.height=img.height*sc;
