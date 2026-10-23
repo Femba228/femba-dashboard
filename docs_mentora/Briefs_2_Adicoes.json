@@ -1,0 +1,61 @@
+{
+  "briefs": [
+    {
+      "id": "POST-2026-10-27-01",
+      "campanha": "Diferencial Femba (geral B2B)",
+      "objetivo": "gerar conversas no WhatsApp com a palavra FORNECEDOR",
+      "publico": "diretores, gestores e mantenedores de empresas (escolas, condomínios, escritórios, food service)",
+      "slot": {"data": "2026-10-27", "hora": "12:00", "formato": "imagem 1080x1080"},
+      "tema": "Um fornecedor pra tudo — 5 linhas, 1 pedido, 1 entrega",
+      "badge": "DIFERENCIAL",
+      "headline": "5 linhas. 1 pedido. 1 entrega.",
+      "corpo": "Lista tipográfica das 5 linhas: Descartáveis · Higiene e limpeza · EPIs · Papelaria · Food service",
+      "oferta": null,
+      "diferenciais": ["um fornecedor para toda a linha", "atendimento humano — vendedor que responde direto", "entrega em até 24h (pedidos até 12h)"],
+      "palavra_chave": "FORNECEDOR",
+      "produto": null,
+      "foto_disponivel": false,
+      "tipo_arte": "tipográfica (sem foto — seção 7.2 do manual)",
+      "restricoes": "sem promessa de preço, estoque ou resultado; não usar 'exclusivo'/'garantido'"
+    },
+    {
+      "id": "POST-2026-10-31-01",
+      "campanha": "Escolas & Creches",
+      "objetivo": "gerar conversas no WhatsApp com a palavra CHECK",
+      "publico": "diretoras e compradoras de escolas e creches",
+      "slot": {"data": "2026-10-31", "hora": "10:00", "formato": "imagem 1080x1080"},
+      "tema": "Checklist de estoque para começar a semana sem susto",
+      "badge": "CHECKLIST",
+      "headline": "Antes de fechar a semana, confira o estoque",
+      "corpo": "Checklist com 5 itens marcados (✅): Papel higiênico · Papel toalha · Sabonete líquido · Saco de lixo · Copos descartáveis",
+      "oferta": null,
+      "diferenciais": ["entrega em até 24h (pedidos até 12h)"],
+      "palavra_chave": "CHECK",
+      "produto": null,
+      "foto_disponivel": false,
+      "tipo_arte": "tipográfica (sem foto — seção 7.2 do manual)",
+      "restricoes": "sem promessa de preço, estoque ou resultado; não usar 'exclusivo'/'garantido'"
+    }
+  ],
+  "legendas_finais": {
+    "POST-2026-10-27-01": "Diretora, gestor ou mantenedor: papel higiênico com um fornecedor, limpeza com outro, material de escritório com um terceiro… cada pedido separado é mais tempo no telefone e mais entrega pra conferir.\n\nNa Femba é um pedido só: descartáveis + higiene e limpeza + EPIs + papelaria + food service. Atendimento humano — vendedor que responde você direto — e entrega em até 24h*.\n\n📲 Chama no WhatsApp (11) 3931-3180, manda a palavra FORNECEDOR e peça seu orçamento.\n\nConsulte os preços por WhatsApp, faça o pedido e receba tudo em até 24h*, no horário comercial, para pedidos colocados até às 12h.\n\nTelefone - (11) 2925 3180\nWhatsapp - (11) 3931 3180\n\nAtendimento: De segunda a sexta: das 8h às 17h30 / Sábado das 9h às 13h.\n\n*Pedido mínimo para entrega R$200,00. Consulte condições para sua região pelo WhatsApp.\n\n*Desconto extra de 5% para pagamento via pix, na loja Física:\nAv. João Paulo Primeiro, 228 • Freguesia do Ó\n\n#escolas #creche #comprasb2b #femba",
+    "POST-2026-10-31-01": "Antes de fechar a semana, confira o que mais acaba na escola:\n\n✅ Papel higiênico\n✅ Papel toalha\n✅ Sabonete líquido\n✅ Saco de lixo\n✅ Copos descartáveis\n\nFaltou algo da lista? Chama no WhatsApp (11) 3931-3180, manda a palavra CHECK e recebe em até 24h* — segunda-feira começa sem susto.\n\nConsulte os preços por WhatsApp, faça o pedido e receba tudo em até 24h*, no horário comercial, para pedidos colocados até às 12h.\n\nTelefone - (11) 2925 3180\nWhatsapp - (11) 3931 3180\n\nAtendimento: De segunda a sexta: das 8h às 17h30 / Sábado das 9h às 13h.\n\n*Pedido mínimo para entrega R$200,00. Consulte condições para sua região pelo WhatsApp.\n\n*Desconto extra de 5% para pagamento via pix, na loja Física:\nAv. João Paulo Primeiro, 228 • Freguesia do Ó\n\n#escolas #checklist #limpeza #descartaveis #gestaoescolar"
+  },
+  "recursos": {
+    "logo_oficial_url": "https://femba228.github.io/femba-dashboard/assets/femba_logo.png",
+    "logo_branco_url": "https://femba228.github.io/femba-dashboard/assets/femba_logo_branco.png",
+    "manual": "https://femba228.github.io/femba-dashboard/docs_mentora/Manual_Producao_Visual_Femba_Mentora.docx",
+    "contrato": "https://femba228.github.io/femba-dashboard/docs_mentora/Contrato_Interface_Mentora_Arquiteto.docx",
+    "molde_json": "https://femba228.github.io/femba-dashboard/docs_mentora/PACOTE-MOLDE_rambo_29-10.json",
+    "referencias_visuais": [
+      "https://femba228.github.io/femba-dashboard/comite01/arte_rambo_max_5l.png",
+      "https://femba228.github.io/femba-dashboard/comite01/arte_interfolha_femba.png",
+      "https://femba228.github.io/femba-dashboard/comite01/arte_multiuso_cha_branco.png"
+    ]
+  },
+  "prazos": {
+    "POST-2026-10-27-01": "pacote completo até ter 27/10 às 9h00 (publicação 12h)",
+    "POST-2026-10-31-01": "pacote completo até sex 30/10 às 17h00 (publicação sáb 10h)"
+  },
+  "destino_pacote": "Google Drive pasta Comite (subpasta Pacotes_Semana_26-10) ou GitHub Pages docs_mentora/ — URL pública testada obrigatória"
+}
