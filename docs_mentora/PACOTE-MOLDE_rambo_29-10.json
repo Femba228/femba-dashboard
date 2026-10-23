@@ -1,0 +1,50 @@
+{
+  "id": "POST-2026-10-29-01",
+  "versao_contrato": "1.0",
+  "data_publicacao": "2026-10-29T12:00:00-03:00",
+  "canais": [
+    "instagram",
+    "facebook"
+  ],
+  "formato": "imagem",
+  "campanha": "Comite-01",
+  "palavra_chave": "NENHUMA",
+  "segmento": "food_service",
+  "produto": "Rambo Max 5L",
+  "artes": [
+    {
+      "ordem": 1,
+      "url": "https://femba228.github.io/femba-dashboard/comite01/arte_rambo_max_5l.png",
+      "proporcao": "1:1",
+      "alt": "Galão laranja do desincrustante Rambo Max 5L"
+    }
+  ],
+  "legenda": "🧼 Desengraxa TUDO — até a gordura que parece impossível!\nO Rambo Max 5L é o desincrustante concentrado que a cozinha da sua empresa precisa: inodoro, espuma controlada e diluição de até 1:100 — um galão rende o equivalente a 500L de produto pronto.\nIdeal para cozinhas profissionais de escolas, creches, padarias, lanchonetes e restaurantes.\n📲 Fale com nossos consultores: WhatsApp (11) 3931-3180\n\nConsulte os preços por WhatsApp, faça o pedido e receba tudo em até 24h*, no horário comercial, para pedidos colocados até às 12h.\n\nTelefone - (11) 2925 3180\nWhatsapp - (11) 3931 3180\n\nAtendimento: De segunda a sexta: das 8h às 17h30 / Sábado das 9h às 13h.\n\n*Pedido mínimo para entrega R$200,00. Consulte condições para sua região pelo WhatsApp.\n\n*Desconto extra de 5% para pagamento via pix, na loja Física:\nAv. João Paulo Primeiro, 228 • Freguesia do Ó\n\n#femba #rambomax #desengraxante #cozinhaprofissional #foodservice #limpezaprofissional",
+  "comentario_fixado": null,
+  "hashtags": [
+    "#femba",
+    "#rambomax",
+    "#desengraxante",
+    "#cozinhaprofissional",
+    "#foodservice",
+    "#limpezaprofissional"
+  ],
+  "qa": {
+    "formato_ok": true,
+    "logo_oficial": true,
+    "cores_paleta": true,
+    "contraste_aa": true,
+    "texto_sem_corte": true,
+    "icones_sem_colisao": true,
+    "rodape_com_respiro": true,
+    "legenda_chars": 941,
+    "urls_testadas": [
+      "https://femba228.github.io/femba-dashboard/comite01/arte_rambo_max_5l.png"
+    ]
+  },
+  "aprovacao": {
+    "por": "Igor",
+    "em": "2026-10-23T10:32:00-03:00",
+    "observacao": "Aprovação das artes Comite-01 registrada na fila de publicação"
+  }
+}
