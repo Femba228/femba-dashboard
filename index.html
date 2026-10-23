@@ -19,9 +19,10 @@
   @media(max-width:800px){.cols{grid-template-columns:1fr}}
   .card{background:var(--card);border:1px solid #2e2818;border-radius:10px;padding:16px;margin-bottom:16px}
   .card h2{font-size:14px;color:var(--gold);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
-  .bar{margin-bottom:8px}
-  .bar .lbl{font-size:12px;color:var(--dim);display:flex;justify-content:space-between}
-  .track{background:#0f0d08;border-radius:6px;height:14px;overflow:hidden;margin-top:3px}
+  .bar{margin-bottom:10px}
+  .bar .lbl{font-size:13px;color:var(--txt);display:flex;justify-content:space-between;align-items:baseline}
+  .bar .lbl .val{font-weight:bold;color:var(--gold);font-size:15px;margin-left:8px;white-space:nowrap}
+  .track{background:#0f0d08;border-radius:6px;height:14px;overflow:hidden;margin-top:4px}
   .fill{height:100%;background:var(--gold);border-radius:6px}
   .b1 .fill{background:var(--green)}.b2 .fill{background:var(--blue)}.b3 .fill{background:#8a7a4a}.b4 .fill{background:var(--red)}.b5 .fill{background:#6b6557}
   table{width:100%;border-collapse:collapse;font-size:13px}
@@ -46,8 +47,8 @@
 </div>
 
 <div class="cols">
-  <div class="card"><h2>Leads por segmento</h2><div id="segmentos"><div class="bar b1"><div class="lbl">Colégio/Escola</div><div class="track"><div class="fill" style="width:100%">478</div></div></div><div class="bar b1"><div class="lbl">Berçário/Creche</div><div class="track"><div class="fill" style="width:99%">476</div></div></div><div class="bar b1"><div class="lbl">Outro</div><div class="track"><div class="fill" style="width:34%">165</div></div></div><div class="bar b1"><div class="lbl">Pública</div><div class="track"><div class="fill" style="width:19%">92</div></div></div><div class="bar b1"><div class="lbl">Curso/Instituto</div><div class="track"><div class="fill" style="width:11%">57</div></div></div></div></div>
-  <div class="card"><h2>Fase da sequência (T1-T5)</h2><div id="fases"><div class="bar b2"><div class="lbl">Não tocado</div><div class="track"><div class="fill" style="width:100%">961</div></div></div><div class="bar b2"><div class="lbl">T1 enviado</div><div class="track"><div class="fill" style="width:16%">155</div></div></div><div class="bar b2"><div class="lbl">Com SDR</div><div class="track"><div class="fill" style="width:14%">137</div></div></div><div class="bar b2"><div class="lbl">Pausado/Inválido</div><div class="track"><div class="fill" style="width:1%">15</div></div></div></div></div>
+  <div class="card"><h2>Leads por segmento</h2><div id="segmentos"><div class="bar b1"><div class="lbl"><span>Colégio/Escola</span><span class="val">478</span></div><div class="track"><div class="fill" style="width:100%"></div></div></div><div class="bar b1"><div class="lbl"><span>Berçário/Creche</span><span class="val">476</span></div><div class="track"><div class="fill" style="width:99%"></div></div></div><div class="bar b1"><div class="lbl"><span>Outro</span><span class="val">165</span></div><div class="track"><div class="fill" style="width:34%"></div></div></div><div class="bar b1"><div class="lbl"><span>Pública</span><span class="val">92</span></div><div class="track"><div class="fill" style="width:19%"></div></div></div><div class="bar b1"><div class="lbl"><span>Curso/Instituto</span><span class="val">57</span></div><div class="track"><div class="fill" style="width:11%"></div></div></div></div></div>
+  <div class="card"><h2>Fase da sequência (T1-T5)</h2><div id="fases"><div class="bar b2"><div class="lbl"><span>Não tocado</span><span class="val">961</span></div><div class="track"><div class="fill" style="width:100%"></div></div></div><div class="bar b2"><div class="lbl"><span>T1 enviado</span><span class="val">155</span></div><div class="track"><div class="fill" style="width:16%"></div></div></div><div class="bar b2"><div class="lbl"><span>Com SDR</span><span class="val">137</span></div><div class="track"><div class="fill" style="width:14%"></div></div></div><div class="bar b2"><div class="lbl"><span>Pausado/Inválido</span><span class="val">15</span></div><div class="track"><div class="fill" style="width:1%"></div></div></div></div></div>
   <div class="card"><h2>Retornos</h2>
     <table>
       <tr><th>Canal</th><th>Respondidos</th></tr>
@@ -85,6 +86,15 @@ function render(){
   document.getElementById('r_zap').textContent = r.zaps_respondidos || 0;
   document.getElementById('r_em').textContent = r.emails_respondidos || 0;
   document.getElementById('r_lig').textContent = r.ligacoes_cotacao || 0;
+  // re-render das barras com valores fora (legível em qualquer largura)
+  function bars(el, obj, cls){
+    if(!el) return;
+    const max = Math.max(...Object.values(obj), 1);
+    el.innerHTML = Object.entries(obj).map(([k2,v]) =>
+      `<div class="bar ${cls}"><div class="lbl"><span>${k2}</span><span class="val">${v}</span></div><div class="track"><div class="fill" style="width:${Math.max(v/max*100,1)}%"></div></div></div>`).join('');
+  }
+  bars(document.getElementById('segmentos'), D.segmentos || {}, 'b1');
+  bars(document.getElementById('fases'), D.fases || {}, 'b2');
 }
 render();
 async function atualizar(){
