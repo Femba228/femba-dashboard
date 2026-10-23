@@ -10,9 +10,9 @@
   body{background:var(--bg);color:var(--txt);font-family:Georgia,'Times New Roman',serif;padding:24px;max-width:1100px;margin:0 auto}
   h1{font-size:26px;color:var(--gold);letter-spacing:.5px}
   .sub{color:var(--dim);font-size:13px;margin:4px 0 20px}
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
   .kpi{background:var(--card);border:1px solid #2e2818;border-radius:10px;padding:14px}
-  .kpi .n{font-size:30px;font-weight:bold;color:var(--txt)}
+  .kpi .n{font-size:28px;font-weight:bold;color:var(--txt)}
   .kpi .l{font-size:12px;color:var(--dim);margin-top:2px}
   .kpi.gold .n{color:var(--gold)}.kpi.green .n{color:var(--green)}.kpi.blue .n{color:var(--blue)}.kpi.red .n{color:var(--red)}
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -23,77 +23,47 @@
   .bar .lbl{font-size:12px;color:var(--dim);display:flex;justify-content:space-between}
   .track{background:#0f0d08;border-radius:6px;height:14px;overflow:hidden;margin-top:3px}
   .fill{height:100%;background:var(--gold);border-radius:6px}
-  .b1 .fill{background:var(--green)}.b2 .fill{background:var(--blue)}.b3 .fill{background:#8a7a4a}.b4 .fill{background:var(--red)}.b5 .fill{background:#6b6557}.b6 .fill{background:#a05a4a}
+  .b1 .fill{background:var(--green)}.b2 .fill{background:var(--blue)}.b3 .fill{background:#8a7a4a}.b4 .fill{background:var(--red)}.b5 .fill{background:#6b6557}
   table{width:100%;border-collapse:collapse;font-size:13px}
   th{color:var(--gold);text-align:left;padding:4px 6px;border-bottom:1px solid #2e2818;font-size:11px;text-transform:uppercase}
   td{padding:4px 6px;border-bottom:1px solid #241f14}
-  .tl{display:flex;gap:4px;align-items:flex-end;height:120px;padding-top:6px}
-  .tcol{flex:1;display:flex;flex-direction:column;align-items:center}
-  .tbars{display:flex;gap:2px;align-items:flex-end;height:100px;width:100%}
-  .tb{flex:1;border-radius:3px 3px 0 0}
-  .tb.z{background:var(--green)}.tb.e{background:var(--blue)}
-  .d{font-size:10px;color:var(--dim);margin-top:4px;white-space:nowrap}
   .btn{position:fixed;bottom:20px;right:20px;background:var(--gold);color:#14120d;border:none;border-radius:24px;padding:12px 20px;font-weight:bold;font-family:inherit;cursor:pointer;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.5)}
   .btn:disabled{opacity:.6;cursor:wait}
   .foot{color:var(--dim);font-size:11px;margin-top:8px}
-  .ok{color:var(--green)}.err{color:var(--red)}
 </style>
 </head>
 <body>
 <h1>FEMBA — Prospecção B2B</h1>
-<div class="sub">Escolas e creches — Zona Norte SP · atualizado em <span id="ts">19/10/2026 10:08</span></div>
+<div class="sub">Escolas e creches · atualizado em <span id="ts">23/10/2026 10:30</span></div>
 
 <div class="kpis">
-  <div class="kpi"><div class="n">415</div><div class="l">Leads no total</div></div>
-  <div class="kpi blue"><div class="n" id="k_intoc">194</div><div class="l">Intocados</div></div>
+  <div class="kpi"><div class="n" id="k_total">1268</div><div class="l">Leads no total</div></div>
+  <div class="kpi blue"><div class="n" id="k_intoc">968</div><div class="l">Intocados</div></div>
   <div class="kpi green"><div class="n" id="k_zap">115</div><div class="l">WhatsApps enviados</div></div>
   <div class="kpi blue"><div class="n" id="k_em">40</div><div class="l">E-mails enviados</div></div>
-  <div class="kpi gold"><div class="n" id="k_ab">11</div><div class="l">Aberturas</div></div>
-  <div class="kpi"><div class="n">0</div><div class="l">Respostas</div></div>
+  <div class="kpi gold"><div class="n" id="k_ret">0</div><div class="l">Retornos</div></div>
+  <div class="kpi red"><div class="n" id="k_bl">8</div><div class="l">Blacklist</div></div>
 </div>
 
 <div class="cols">
-  <div class="card"><h2>Funil por status</h2>
-    <div id="funil"><div class="bar b1"><div class="lbl">WhatsApp Enviado</div><div class="track"><div class="fill" style="width:28%">115</div></div></div><div class="bar b2"><div class="lbl">Email Enviado</div><div class="track"><div class="fill" style="width:10%">40</div></div></div><div class="bar b3"><div class="lbl">Novo</div><div class="track"><div class="fill" style="width:45%">187</div></div></div><div class="bar b4"><div class="lbl">Pendente</div><div class="track"><div class="fill" style="width:4%">7</div></div></div><div class="bar b5"><div class="lbl">Email Nao Verificado</div><div class="track"><div class="fill" style="width:4%">0</div></div></div><div class="bar b6"><div class="lbl">Email Invalido</div><div class="track"><div class="fill" style="width:4%">6</div></div></div></div>
+  <div class="card"><h2>Leads por segmento</h2><div id="segmentos"><div class="bar b1"><div class="lbl">Colégio/Escola</div><div class="track"><div class="fill" style="width:100%">478</div></div></div><div class="bar b1"><div class="lbl">Berçário/Creche</div><div class="track"><div class="fill" style="width:99%">476</div></div></div><div class="bar b1"><div class="lbl">Outro</div><div class="track"><div class="fill" style="width:34%">165</div></div></div><div class="bar b1"><div class="lbl">Pública</div><div class="track"><div class="fill" style="width:19%">92</div></div></div><div class="bar b1"><div class="lbl">Curso/Instituto</div><div class="track"><div class="fill" style="width:11%">57</div></div></div></div></div>
+  <div class="card"><h2>Fase da sequência (T1-T5)</h2><div id="fases"><div class="bar b2"><div class="lbl">Não tocado</div><div class="track"><div class="fill" style="width:100%">961</div></div></div><div class="bar b2"><div class="lbl">T1 enviado</div><div class="track"><div class="fill" style="width:16%">155</div></div></div><div class="bar b2"><div class="lbl">Com SDR</div><div class="track"><div class="fill" style="width:14%">137</div></div></div><div class="bar b2"><div class="lbl">Pausado/Inválido</div><div class="track"><div class="fill" style="width:1%">15</div></div></div></div></div>
+  <div class="card"><h2>Retornos</h2>
+    <table>
+      <tr><th>Canal</th><th>Respondidos</th></tr>
+      <tr><td>📱 WhatsApp</td><td id="r_zap">0</td></tr>
+      <tr><td>📧 E-mail</td><td id="r_em">0</td></tr>
+      <tr><td>📞 Ligações (cotação)</td><td id="r_lig">0</td></tr>
+    </table>
   </div>
-  <div class="card"><h2>Timeline de disparos</h2>
-    <div class="tl">
-      <div class="tcol"><div class="tbars">
-      <div class="tb z" style="height:87%" title="20 WhatsApps"></div>
-    </div><div class="d">05/10</div></div><div class="tcol"><div class="tbars">
-      <div class="tb z" style="height:87%" title="20 WhatsApps"></div><div class="tb e" style="height:35%" title="8 e-mails"></div>
-    </div><div class="d">07/10</div></div><div class="tcol"><div class="tbars">
-      <div class="tb z" style="height:100%" title="23 WhatsApps"></div><div class="tb e" style="height:52%" title="12 e-mails"></div>
-    </div><div class="d">08/10</div></div><div class="tcol"><div class="tbars">
-      <div class="tb z" style="height:87%" title="20 WhatsApps"></div><div class="tb e" style="height:48%" title="11 e-mails"></div>
-    </div><div class="d">13/10</div></div><div class="tcol"><div class="tbars">
-      <div class="tb z" style="height:87%" title="20 WhatsApps"></div>
-    </div><div class="d">14/10</div></div><div class="tcol"><div class="tbars">
-    </div><div class="d">15/10</div></div><div class="tcol"><div class="tbars">
-      <div class="tb z" style="height:87%" title="20 WhatsApps"></div><div class="tb e" style="height:65%" title="15 e-mails"></div>
-    </div><div class="d">16/10</div></div><div class="tcol"><div class="tbars">
-    </div><div class="d">17/10</div></div><div class="tcol"><div class="tbars">
-    </div><div class="d">18/10</div></div><div class="tcol"><div class="tbars">
-    </div><div class="d">19/10</div></div>
-    </div>
-  </div>
-  <div class="card"><h2>Leads por bairro (top 10)</h2>
-    <table><tr><th>Bairro</th><th>Leads</th></tr><tr><td>Jaçanã</td><td>21</td></tr><tr><td>Jardim Brasil</td><td>18</td></tr><tr><td>Vila Santa Catarina</td><td>17</td></tr><tr><td>Vila Sabrina</td><td>14</td></tr><tr><td>Jardim Picerni</td><td>13</td></tr><tr><td>Lauzane Paulista</td><td>12</td></tr><tr><td>Casa Verde</td><td>11</td></tr><tr><td>Jardim Fontalis</td><td>9</td></tr><tr><td>Vila Gustavo</td><td>9</td></tr><tr><td>Vila Penteado</td><td>9</td></tr></table>
-  </div>
-  <div class="card"><h2>Canais de contato</h2>
-    <table><tr><th>Canal</th><th>Leads</th><th>Uso</th></tr>
-      <tr><td>📱 Celular/WhatsApp</td><td>0</td><td>Régua 9h</td></tr>
-      <tr><td>☎️ Fixo (SDR)</td><td>165</td><td>Aquecimento</td></tr>
-      <tr><td>🚫 Sem telefone</td><td>29</td><td>—</td></tr></table>
-  </div>
-  <div class="card"><h2>Aberturas recentes</h2>
-    <table><tr><th>Lead</th><th>Quando</th></tr><tr><td>recepcao.wpi</td><td>08/10 14:02</td></tr><tr><td>ceiaczampirollo</td><td>13/10 14:35</td></tr><tr><td>colegionb2016</td><td>13/10 14:51</td></tr><tr><td>centenario</td><td>13/10 16:01</td></tr><tr><td>aeb-brasil</td><td>16/10 09:27</td></tr><tr><td>colegiopetit</td><td>16/10 09:27</td></tr><tr><td>asatransforma</td><td>16/10 09:29</td></tr><tr><td>colegiomadrid</td><td>16/10 09:33</td></tr><tr><td>…</td><td>+3</td></tr></table>
-  </div>
-  <div class="card"><h2>Meta / WhatsApp</h2>
-    <table><tr><th>Item</th><th>Valor</th></tr>
+  <div class="card"><h2>Qualidade da operação</h2>
+    <table>
+      <tr><th>Item</th><th>Valor</th></tr>
       <tr><td>Qualidade do número</td><td>🟢 GREEN</td></tr>
-      <tr><td>Tier de mensagens</td><td>TIER_2K</td></tr>
-      <tr><td>Templates aprovados</td><td>10</td></tr></table>
+      <tr><td>Tier WhatsApp</td><td>TIER_2K (2.000 conversas/24h)</td></tr>
+      <tr><td>Templates aprovados</td><td>14</td></tr>
+      <tr><td>Aberturas de e-mail</td><td>8</td></tr>
+    </table>
   </div>
 </div>
 
@@ -101,21 +71,25 @@
 <div class="foot">Dados vivos via dash.json · <span id="st"></span></div>
 
 <script>
-let D = {"atualizado": "19/10/2026 10:08", "kpis": {"total_leads": 415, "intocados": 194, "whatsapp_enviados": 115, "email_enviados": 40, "email_invalidos": 6, "respostas": 0, "descadastros": 0, "aberturas": 11, "bounces": 3, "quality_rating": "GREEN", "tier": "TIER_2K", "templates_aprovados": 10}};
+let D = {"atualizado": "23/10/2026 10:30", "kpis": {"total_leads": 1268, "intocados": 968, "whatsapp_enviados": 115, "email_enviados": 40, "email_invalidos": 6, "respostas": 0, "descadastros": 0, "aberturas": 8, "bounces": 0, "quality_rating": "GREEN", "tier": "TIER_2K", "templates_aprovados": 14}, "status_counts": {"Novo": 961, "WhatsApp_Enviado": 115, "Aguardando_SDR": 79, "Email_Enviado": 40, "SDR_NaoLigou": 30, "SDR_Pendente": 21, "Pendente": 7, "SDR_Ligado": 7, "Email_Invalido": 6, "Sem_Telefone": 1, "Resgate_Pendente": 1}, "ab_teste": {"A": 10, "B": 10, "controle": 0, "respostas_A": 0, "respostas_B": 0}, "aberturas_detalhe": [{"lead": "contato", "email": "contato@aeb-brasil.org.br", "data": "2026-10-16 09:27"}, {"lead": "contato", "email": "contato@colegiopetit.com.br", "data": "2026-10-16 09:27"}, {"lead": "lais.silveira", "email": "lais.silveira@asatransforma.org.br", "data": "2026-10-16 09:29"}, {"lead": "secretaria", "email": "secretaria@colegiomadrid.com.br", "data": "2026-10-16 09:33"}, {"lead": "cei.s.amanha", "email": "cei.s.amanha@gmail.com", "data": "2026-10-17 05:39"}, {"lead": "contato", "email": "contato@uniepre.com.br", "data": "2026-10-19 10:33"}, {"lead": "contato", "email": "contato@casatiamarly.org.br", "data": "2026-10-19 11:29"}], "timeline": [{"data": "13/10", "whatsapp": 20, "email": 11}, {"data": "14/10", "whatsapp": 20, "email": 0}, {"data": "16/10", "whatsapp": 20, "email": 15}, {"data": "17/10", "whatsapp": 0, "email": 0}, {"data": "18/10", "whatsapp": 0, "email": 0}, {"data": "19/10", "whatsapp": 0, "email": 0}, {"data": "20/10", "whatsapp": 0, "email": 0}, {"data": "21/10", "whatsapp": 0, "email": 0}, {"data": "22/10", "whatsapp": 0, "email": 0}, {"data": "23/10", "whatsapp": 0, "email": 0}], "por_bairro": {"Jaraguá": 55, "Vila Mariana": 51, "Pirituba": 49, "Tatuapé": 45, "Lapa": 44, "Perdizes": 41, "Mooca": 40, "Brás": 39, "Perus": 38, "Butantã": 35}, "canais": {"moveis": 2, "fixos": 686, "sem_telefone": 83}, "sdr": {"v1": 83, "v2": 82, "v3": 82, "respondidos": 0}, "templates_aprovados_lista": ["seq_pedido_unico", "seq_rendimento", "seq_estoque", "seq_custo", "primeiro_contato_b", "primeiro_contato_a", "teste_bruno", "primeiro_contato_v3", "primeiro_contato_2", "followup_cotacao", "aviso_templates", "teste_igor_02", "teste_igor_01", "hello_world"], "segmentos": {"Colégio/Escola": 478, "Berçário/Creche": 476, "Outro": 165, "Pública": 92, "Curso/Instituto": 57}, "fases": {"Não tocado": 961, "T1 enviado": 155, "Com SDR": 137, "Pausado/Inválido": 15}, "seg_fase": {"Berçário/Creche": {"Com SDR": 25, "Não tocado": 406, "Pausado/Inválido": 7, "T1 enviado": 38}, "Colégio/Escola": {"Com SDR": 47, "Não tocado": 365, "Pausado/Inválido": 3, "T1 enviado": 63}, "Curso/Instituto": {"Com SDR": 6, "Não tocado": 40, "Pausado/Inválido": 0, "T1 enviado": 11}, "Outro": {"Com SDR": 41, "Não tocado": 87, "Pausado/Inválido": 4, "T1 enviado": 33}, "Pública": {"Com SDR": 18, "Não tocado": 63, "Pausado/Inválido": 1, "T1 enviado": 10}}, "blacklist": 8, "retornos": 0};
 function render(){
   document.getElementById('ts').textContent = D.atualizado;
   const k = D.kpis;
+  document.getElementById('k_total').textContent = k.total_leads;
   document.getElementById('k_intoc').textContent = k.intocados;
   document.getElementById('k_zap').textContent = k.whatsapp_enviados;
   document.getElementById('k_em').textContent = k.email_enviados;
-  document.getElementById('k_ab').textContent = k.aberturas;
+  document.getElementById('k_ret').textContent = k.respostas;
+  document.getElementById('k_bl').textContent = k.blacklist;
+  const r = D.retornos || {};
+  document.getElementById('r_zap').textContent = r.zaps_respondidos || 0;
+  document.getElementById('r_em').textContent = r.emails_respondidos || 0;
+  document.getElementById('r_lig').textContent = r.ligacoes_cotacao || 0;
 }
 render();
 async function atualizar(){
   const b = document.getElementById('btn');
   b.disabled = true; b.textContent = '⏳ Atualizando…';
-  document.getElementById('st').textContent = 'pedindo regeneração…';
-  try { fetch('https://maestro.adapta.one/webhooks/generic/9e7c9d1c9e5b4f0e8e2f6f2f6f2f6f2f', {mode:'no-cors'}); } catch(e) {}
   let ok = false;
   for (let i = 0; i < 15; i++) {
     await new Promise(r => setTimeout(r, 6000));
