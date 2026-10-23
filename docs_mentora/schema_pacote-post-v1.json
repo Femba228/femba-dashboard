@@ -1,0 +1,158 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://femba.com.br/schemas/pacote-post-v1.json",
+  "title": "Pacote de post Femba",
+  "description": "Contrato de entrega entre Mentora de Posts (produção) e Arquiteto de Conteúdo (publicação). Validado por scripts/valida_pacote.py antes de qualquer publicação.",
+  "version": "1.0.0",
+  "type": "object",
+  "required": [
+    "id", "versao_contrato", "data_publicacao", "canais", "formato",
+    "campanha", "palavra_chave", "artes", "legenda", "qa", "aprovacao"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Z]{3,6}-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}$",
+      "description": "Ex.: POST-2026-11-09-01"
+    },
+    "versao_contrato": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Versão do contrato. Muda só com quebra de compatibilidade."
+    },
+    "data_publicacao": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:00-03:00$",
+      "description": "ISO 8601 com fuso de São Paulo (-03:00). Ex.: 2026-11-09T12:00:00-03:00"
+    },
+    "canais": {
+      "type": "array",
+      "items": { "enum": ["instagram", "facebook", "instagram_story"] },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "instagram_story não publica por API nesta fase — exige registro manual."
+    },
+    "formato": {
+      "enum": ["imagem", "carrossel", "story", "reels"],
+      "description": "imagem = 1 arte 1080x1080 ou 1080x1350; carrossel = 2 a 10 artes."
+    },
+    "campanha": { "type": "string", "minLength": 3, "maxLength": 60 },
+    "palavra_chave": {
+      "type": "string",
+      "pattern": "^[A-Z]{2,20}$",
+      "description": "Palavra que o lead envia no WhatsApp, para atribuição no CRM. Use 'NENHUMA' se o post não pede rastreio."
+    },
+    "segmento": {
+      "enum": ["escolas", "creches", "condominios", "food_service", "escritorios", "clinicas", "industrias", "geral"]
+    },
+    "produto": { "type": ["string", "null"], "maxLength": 80 },
+    "artes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["ordem", "url", "proporcao"],
+        "additionalProperties": false,
+        "properties": {
+          "ordem": { "type": "integer", "minimum": 1, "maximum": 10 },
+          "url": {
+            "type": "string",
+            "pattern": "^https://",
+            "description": "HTTPS público, HTTP 200, sem login. O Instagram baixa a arte por esta URL."
+          },
+          "proporcao": {
+            "enum": ["1:1", "4:5", "9:16", "16:9"],
+            "description": "Carrossel: todas as artes no mesmo formato — o IG corta todas pela primeira."
+          },
+          "alt": { "type": "string", "maxLength": 120 },
+          "legenda_alt": { "type": "string", "maxLength": 300 }
+        }
+      }
+    },
+    "legenda": {
+      "type": "string",
+      "minLength": 40,
+      "maxLength": 2200,
+      "description": "Texto completo JÁ com o bloco fixo de serviço. Limite da Meta: 2200 caracteres."
+    },
+    "comentario_fixado": { "type": ["string", "null"], "maxLength": 2200 },
+    "hashtags": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^#[A-Za-z0-9_]{1,60}$" },
+      "minItems": 4,
+      "maxItems": 6
+    },
+    "qa": {
+      "type": "object",
+      "required": [
+        "formato_ok", "logo_oficial", "cores_paleta", "contraste_aa",
+        "texto_sem_corte", "icones_sem_colisao", "rodape_com_respiro",
+        "legenda_chars", "urls_testadas"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "formato_ok": { "type": "boolean" },
+        "logo_oficial": {
+          "description": "true = arquivo oficial colado | 'reinterpretado' = IA reinterpretou (aceito em post de produto, registrado p/ decisao do Igor) | false = nao conforme",
+          "anyOf": [
+            { "type": "boolean" },
+            { "type": "string", "enum": ["reinterpretado"] }
+          ]
+        },
+        "cores_paleta": { "type": "boolean" },
+        "contraste_aa": { "type": "boolean" },
+        "texto_sem_corte": { "type": "boolean" },
+        "icones_sem_colisao": { "type": "boolean" },
+        "rodape_com_respiro": { "type": "boolean" },
+        "observacao": {
+          "type": "string",
+          "maxLength": 400,
+          "description": "Obrigatorio quando formato_ok=false (ex.: '1024 — limitacao da ferramenta') ou logo_oficial='reinterpretado'. Explica o desvio consciente."
+        },
+        "legenda_chars": { "type": "integer", "minimum": 40, "maximum": 2200 },
+        "urls_testadas": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^https://" },
+          "minItems": 1,
+          "description": "Toda URL que o validador deve confirmar como HTTP 200 de imagem."
+        }
+      }
+    },
+    "aprovacao": {
+      "type": "object",
+      "required": ["por", "em"],
+      "additionalProperties": false,
+      "properties": {
+        "por": { "type": "string", "minLength": 2 },
+        "em": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T" },
+        "observacao": { "type": "string", "maxLength": 300 }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "formato": { "const": "carrossel" } } },
+      "then": {
+        "properties": {
+          "artes": { "minItems": 2, "maxItems": 10 },
+          "comentario_fixado": { "type": "string", "minLength": 5 }
+        },
+        "required": ["comentario_fixado"]
+      }
+    },
+    {
+      "if": { "properties": { "formato": { "const": "story" } } },
+      "then": {
+        "properties": { "artes": { "minItems": 1, "maxItems": 1 } }
+      }
+    },
+    {
+      "if": { "properties": { "formato": { "const": "imagem" } } },
+      "then": {
+        "properties": { "artes": { "minItems": 1, "maxItems": 1 } }
+      }
+    }
+  ]
+}
